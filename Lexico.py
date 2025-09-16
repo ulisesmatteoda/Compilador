@@ -33,6 +33,20 @@ class Lexico(Lexer):
     NE = r'!='
     
 
+    # Identificador: primera letra mayúscula, resto letras mayúsculas, dígitos o %
+    @_(r'[A-Z][A-Z0-9%]*')
+    def ID(self, t):
+        if len(t.value) > 20:
+            print(f"Warning: identificador '{t.value}' truncado a 20 caracteres en linea {t.lineno} ")
+            t.value = t.value[:20]  # truncar
+        return t
+    
+    #Lleva la cuenta de que linea estamos
+    @_(r'\n+')
+    def newline(self, t):
+        self.lineno += t.value.count('\n')
+
+
 
 
 
