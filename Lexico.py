@@ -46,6 +46,30 @@ class Lexico(Lexer):
     def newline(self, t):
         self.lineno += t.value.count('\n')
 
+    #UINT
+    @_(r'\d+UI')
+    def UINT(self, t):
+        # Quitar el sufijo 'UI'
+        valor = int(t.value[:-2])
+        if valor < 0 or valor > 65535:
+            print(f"Error: valor {valor} fuera del rango de 16 bits en línea {t.lineno}")
+        t.value = valor
+        return t
+    
+    @_(r'[+-]?(\d+\.\d*|\.\d+)(D[+-]\d+)')
+    def FLOAT64(self, t):
+        try:
+            # Reemplazamos 'D' por 'e' para convertir a float de Python
+            value = float(t.value.replace('D', 'e'))
+            # Rango de double en IEEE 754
+            if abs(value) < 2.2250738585072014e-308:
+                print(f"Valor {value} demasiado pequeño para float64")
+            elif abs(value) > 1.7976931348623157e+308:
+                print(f"Valor {value} demasiado grande para float64")
+        except ValueError:
+            print(f"Valor inválido: {t.value}")
+        return t
+
 
 
 
