@@ -5,8 +5,8 @@ class Lexico(Lexer):
     # Nombre de los tokens.
 
     tokens = {SUMA, RESTA, MULTIPLICACION, DIVISION, ASIGNACION1,
-            ASIGNACION2, LE, GE, LT, GT, NE, IGUAL, ID, IF, ELSE, ENDIF, PRINT, RETURN, 
-            UINT, DFLOAT, DO, WHILE, FLECHA}
+            ASIGNACION2, LE, GE, LT, GT, NE, IGUAL, ID, IF, #ELSE, ENDIF, PRINT, RETURN, 
+            UINT, DFLOAT}#DO, WHILE, FLECHA}
     
     #literales
 
@@ -56,8 +56,8 @@ class Lexico(Lexer):
         t.value = valor
         return t
     
-    @_(r'[+-]?(\d+\.\d*|\.\d+)(D[+-]\d+)')
-    def FLOAT64(self, t):
+    @_(r'(\d+\.\d*|\.\d+)(D[+-]?\d+)?')
+    def DFLOAT(self, t):
         try:
             # Reemplazamos 'D' por 'e' para convertir a float de Python
             value = float(t.value.replace('D', 'e'))
@@ -70,7 +70,11 @@ class Lexico(Lexer):
             print(f"Valor inválido: {t.value}")
         return t
 
-
+if __name__ == '__main__':
+    data = '.2D+10'
+    lexer = Lexico()
+    for tok in lexer.tokenize(data):
+        print(tok)
 
 
 
