@@ -6,7 +6,7 @@ class Lexico(Lexer):
 
     tokens = {SUMA, RESTA, MULTIPLICACION, DIVISION, ASIGNACION1,
             ASIGNACION2, LE, GE, LT, GT, NE, IGUAL, ID, IF, ELSE, ENTERO, ENDIF, PRINT, RETURN, 
-            UINT, FLECHA, DO, WHILE}
+            UINT, FLECHA, DO, WHILE, STRING}
     
     #literales
 
@@ -16,9 +16,9 @@ class Lexico(Lexer):
 
     ignore = ' \t'
 
-    @_((r'##[\s\S]*?##'))
+    @_(r'##[\s\S]*?##')
     def ignore_comment(self, t):
-        # [\s\S] = coincide con cualquier carácter, incluyendo saltos de línea.
+        # [\s\S] = coincide con cualquier carácter, incluyendo saltos de línea. 
         pass
     
     #reglas para tokens
@@ -52,6 +52,12 @@ class Lexico(Lexer):
         if len(t.value) > 20:
             print(f"Warning: identificador '{t.value}' truncado a 20 caracteres en linea {t.lineno} ")
             t.value = t.value[:20]  # truncar
+        return t
+    
+    @_(r'"[^"\n]*"')
+    def STRING(self, t):
+        # Quitamos las comillas del valor
+        t.value = t.value[1:-1]
         return t
     
     
@@ -99,8 +105,16 @@ if __name__ == '__main__':
                 ## HOLA 
                 ESTO SE IGNORA
                 ##
+
+                "comentario"
+
+                "comentariossssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+                "
+
             
                 HOLASOYUNIDENTIFICADORRELARGO = 20UI 
+
+                
                 (80UI + 873648294357539UI)
                 .8 .1 1. 3.D+8 3.1D-309 '''
     lexer = Lexico()
