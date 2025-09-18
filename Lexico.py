@@ -6,7 +6,7 @@ class Lexico(Lexer):
 
     tokens = {SUMA, RESTA, MULTIPLICACION, DIVISION, ASIGNACION1,
             ASIGNACION2, LE, GE, LT, GT, NE, IGUAL, ID, IF, #ELSE, ENDIF, PRINT, RETURN, 
-            UINT, DFLOAT}#DO, WHILE, FLECHA}
+            UINT, DFLOAT, FLECHA}#DO, WHILE}
     
     #literales
 
@@ -40,11 +40,6 @@ class Lexico(Lexer):
             print(f"Warning: identificador '{t.value}' truncado a 20 caracteres en linea {t.lineno} ")
             t.value = t.value[:20]  # truncar
         return t
-    
-    #Lleva la cuenta de que linea estamos
-    @_(r'\n+')
-    def newline(self, t):
-        self.lineno += t.value.count('\n')
 
     #UINT
     @_(r'\d+UI')
@@ -56,22 +51,33 @@ class Lexico(Lexer):
         t.value = valor
         return t
     
-    @_(r'(\d+\.\d*|\.\d+)(D[+-]?\d+)?')
-    def DFLOAT(self, t):
-        try:
+    #@_(r'(\d+\.\d*|\.\d+)(D[+-]?\d+)?')
+    #def DFLOAT(self, t):
+    #    try:
             # Reemplazamos 'D' por 'e' para convertir a float de Python
-            value = float(t.value.replace('D', 'e'))
+     #       value = float(t.value.replace('D', 'e'))
             # Rango de double en IEEE 754
-            if abs(value) < 2.2250738585072014e-308:
-                print(f"Valor {value} demasiado pequeño para float64")
-            elif abs(value) > 1.7976931348623157e+308:
-                print(f"Valor {value} demasiado grande para float64")
-        except ValueError:
-            print(f"Valor inválido: {t.value}")
-        return t
+      #      if abs(value) < 2.2250738585072014e-308:
+       #         print(f"Valor {value} demasiado pequeño para float64")
+        #    elif abs(value) > 1.7976931348623157e+308:
+         #       print(f"Valor {value} demasiado grande para float64")
+        #except ValueError:
+         #   print(f"Valor inválido: {t.value}")
+        #return t
+
+            #Lleva la cuenta de que linea estamos
+    @_(r'\n+')
+    def newline(self, t):
+        self.lineno += t.value.count('\n')
+
 
 if __name__ == '__main__':
-    data = '.2D+10'
+    data = ''' 20UI + 3UI 
+
+
+                X = 3UI 
+                
+                40UI/3UI+5UI*8UI-5UI'''
     lexer = Lexico()
     for tok in lexer.tokenize(data):
         print(tok)
