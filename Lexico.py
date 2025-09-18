@@ -66,19 +66,19 @@ class Lexico(Lexer):
         t.value = valor
         return t
     
-    #@_(r'(\d+\.\d*|\.\d+)(D[+-]?\d+)?')
-    #def DFLOAT(self, t):
-    #    try:
+    @_(r'(\d+\.\d*|\.\d+)(D[+-]?\d+)?')
+    def DFLOAT(self, t):
+        try:
             # Reemplazamos 'D' por 'e' para convertir a float de Python
-     #       value = float(t.value.replace('D', 'e'))
+            value = float(t.value.replace('D', 'e'))
             # Rango de double en IEEE 754
-      #      if abs(value) < 2.2250738585072014e-308:
-       #         print(f"Valor {value} demasiado pequeño para float64")
-        #    elif abs(value) > 1.7976931348623157e+308:
-         #       print(f"Valor {value} demasiado grande para float64")
-        #except ValueError:
-         #   print(f"Valor inválido: {t.value}")
-        #return t
+            if abs(value) < 2.2250738585072014e-308:
+                print(f"Valor {value} demasiado pequeño para float64")
+            elif abs(value) > 1.7976931348623157e+308:
+                print(f"Valor {value} demasiado grande para float64")
+        except ValueError:
+            print(f"Valor inválido: {t.value}")
+        return t
 
             #Lleva la cuenta de que linea estamos
     @_(r'\n+')
@@ -100,7 +100,9 @@ if __name__ == '__main__':
                 ESTO SE IGNORA
                 ##
             
-                HOLASOYUNIDENTIFICADORRELARGO = 20UI '''
+                HOLASOYUNIDENTIFICADORRELARGO = 20UI 
+                (80UI + 873648294357539UI)
+                .8 .1 1. 3.D+8 3.1D-309 '''
     lexer = Lexico()
     for tok in lexer.tokenize(data):
         print(tok)
