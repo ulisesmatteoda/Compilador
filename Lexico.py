@@ -5,8 +5,8 @@ class Lexico(Lexer):
     # Nombre de los tokens.
 
     tokens = {SUMA, RESTA, MULTIPLICACION, DIVISION, ASIGNACION1,
-            ASIGNACION2, LE, GE, LT, GT, NE, IGUAL, ID, IF, ELSE, ENTERO, #ENDIF, PRINT, RETURN, 
-            UINT, FLECHA}#DO, WHILE}
+            ASIGNACION2, LE, GE, LT, GT, NE, IGUAL, ID, IF, ELSE, ENTERO, ENDIF, PRINT, RETURN, 
+            UINT, FLECHA, DO, WHILE}
     
     #literales
 
@@ -15,7 +15,7 @@ class Lexico(Lexer):
     #caracteres a ignorar
 
     ignore = ' \t'
-    
+
     @_((r'##[\s\S]*?##'))
     def ignore_comment(self, t):
         # [\s\S] = coincide con cualquier carácter, incluyendo saltos de línea.
@@ -39,6 +39,11 @@ class Lexico(Lexer):
     UINT = r'uint'
     IF= r'if'
     ELSE = r'else'
+    ENDIF = r'endif'
+    PRINT = r'print'
+    RETURN = r'return'
+    DO = r'do'
+    WHILE = r'while'
 
 
     # Identificador: primera letra mayúscula, resto letras mayúsculas, dígitos o %
