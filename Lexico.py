@@ -5,18 +5,23 @@ class Lexico(Lexer):
     # Nombre de los tokens.
 
     tokens = {SUMA, RESTA, MULTIPLICACION, DIVISION, ASIGNACION1,
-            ASIGNACION2, LE, GE, LT, GT, NE, IGUAL, ID, IF, #ELSE, ENDIF, PRINT, RETURN, 
-            UINT, DFLOAT, FLECHA}#DO, WHILE}
+            ASIGNACION2, LE, GE, LT, GT, NE, IGUAL, ID, IF, ELSE, ENTERO, #ENDIF, PRINT, RETURN, 
+            UINT, FLECHA}#DO, WHILE}
     
     #literales
 
-    literals = { '(', ')', '{', '}', ';' }
+    literals = { '(', ')', '{', '}', ';' , '_', ',' }
 
     #caracteres a ignorar
 
     ignore = ' \t'
-
-    #reglas para tokens.
+    
+    @_((r'##[\s\S]*?##'))
+    def ignore_comment(self, t):
+        # [\s\S] = coincide con cualquier carácter, incluyendo saltos de línea.
+        pass
+    
+    #reglas para tokens
 
     FLECHA = r'->'
     RESTA = r'\-'
@@ -31,7 +36,10 @@ class Lexico(Lexer):
     GE = r'>='
     GT = r'>'
     NE = r'!='
-    
+    UINT = r'uint'
+    IF= r'if'
+    ELSE = r'else'
+
 
     # Identificador: primera letra mayúscula, resto letras mayúsculas, dígitos o %
     @_(r'[A-Z][A-Z0-9%]*')
@@ -40,10 +48,12 @@ class Lexico(Lexer):
             print(f"Warning: identificador '{t.value}' truncado a 20 caracteres en linea {t.lineno} ")
             t.value = t.value[:20]  # truncar
         return t
+    
+    
 
     #UINT
     @_(r'\d+UI')
-    def UINT(self, t):
+    def ENTERO(self, t):
         # Quitar el sufijo 'UI'
         valor = int(t.value[:-2])
         if valor < 0 or valor > 65535:
@@ -71,13 +81,21 @@ class Lexico(Lexer):
         self.lineno += t.value.count('\n')
 
 
+
 if __name__ == '__main__':
     data = ''' 20UI + 3UI 
 
 
                 X = 3UI 
                 
-                40UI/3UI+5UI*8UI-5UI'''
+                40UI/3UI+5UI*8UI-5UI
+                
+                if ID=8UI
+                ## HOLA 
+                ESTO SE IGNORA
+                ##
+            
+                HOLASOYUNIDENTIFICADORRELARGO = 20UI '''
     lexer = Lexico()
     for tok in lexer.tokenize(data):
         print(tok)
