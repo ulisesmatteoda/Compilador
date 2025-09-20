@@ -3,17 +3,14 @@ from sly import Lexer
 class Lexico(Lexer):
 
     # Nombre de los tokens.
-
     tokens = {SUMA, RESTA, MULTIPLICACION, DIVISION, ASIGNACION1,
             ASIGNACION2, LE, GE, LT, GT, NE, IGUAL, ID, IF, ELSE, ENTERO, ENDIF, PRINT, RETURN, 
             UINT, FLECHA, DO, WHILE, STRING}
     
     #literales
-
     literals = { '(', ')', '{', '}', ';' , '_', ',' }
 
     #caracteres a ignorar
-
     ignore = ' \t'
 
     @_(r'##[\s\S]*?##')
@@ -60,8 +57,6 @@ class Lexico(Lexer):
         t.value = t.value[1:-1]
         return t
     
-    
-
     #UINT
     @_(r'\d+UI')
     def ENTERO(self, t):
@@ -90,6 +85,11 @@ class Lexico(Lexer):
     @_(r'\n+')
     def newline(self, t):
         self.lineno += t.value.count('\n')
+
+    def error(self, t):
+        # t.value[0] es el carácter problemático, t.index es el desplazamiento
+        print(f"[Lex] Carácter ilegal {t.value[0]!r} en línea {self.lineno}, índice {self.index}")
+        self.index += 1  # importante: avanzar para no entrar en bucle
 
 
 
