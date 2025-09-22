@@ -19,6 +19,7 @@ class Lexico(Lexer):
     
     #reglas para tokens
     FLECHA = r'->'
+    IGUAL = r'=='
     ASIGNACION1 = r'=' #este tambien se puede pasar como literal, pero mas intuitivo llamarlos 1 y 2
     ASIGNACION2= r':='
     LE = r'<='
@@ -26,7 +27,6 @@ class Lexico(Lexer):
     GE = r'>='
     GT = r'>'
     NE = r'!='
-    IGUAL = r'=='
     UINT = r'uint'
     IF= r'if'
     ELSE = r'else'
@@ -92,7 +92,7 @@ if __name__ == '__main__':
                 
                 40UI/3UI+5UI*8UI-5UI
                 
-                if ID=8UI
+                if ID==8UI
                 ## HOLA 
                 ESTO SE IGNORA
                 ##
@@ -112,87 +112,3 @@ if __name__ == '__main__':
     for tok in lexer.tokenize(data):
         print(tok)
 
-
-class Sintactico(Parser):
-    tokens = Lexico.tokens
-
-    #Basicamente cual toma primero, va de menor a mayor prioridad. Tambien define asociatividad (left, right,nonassoc)(agrupa primero en alguna direccion)
-    precedence =(('nonassoc', 'LE', 'LT', 'GE', 'GT', 'NE', 'IGUAL') #nonassoc, no permite asociatividad sin parentesis, util en comparaciones para que no se haga algo asi: a < b <= c 
-                ,('left', '+', '-') #menos prioridad
-                ,('left', '*', '/') #mas prioridad
-                ,('right', 'UMINUS')) # usa UMINUS, con mas prioridad, para diferenciar el "-", numero negativo, de la resta
-    
-    def __init__(self): #estructura de apoyo para variables
-        self.names = { }
-
-    @_('ID "=" expr')
-    def statement(self, p):
-        self.names[p.NAME] = p.expr
-
-    @_('expr')
-    def statement(self, p): # se llama distinto por que es terminal
-        print(p.expr)
-
-    # El nombre del metodo define un no terminal, que estan en la regla de produccion
-
-    #Aritmetica:
-    @_('expr "+" expr') 
-    def expr(self, p):
-        return p.expr0 + p.expr1
-
-    @_('expr "-" expr')
-    def expr(self, p):
-        return p.expr0 - p.expr1
-
-    @_('expr "*" expr')
-    def expr(self, p):
-        return p.expr0 * p.expr1
-
-    @_('expr "/" expr')
-    def expr(self, p):
-        return p.expr0 / p.expr1
-
-    @_('"-" expr %prec UMINUS') #%prec indica que siga la prioridad de UMINUS y no la de '-'
-    def expr(self, p):
-        return -p.expr
-    
-    #Comparadores:
-    @_('expr LT expr')
-    def expr(self, p):
-        return p.expr0 < p.expr1
-
-    @_('expr LE expr')
-    def expr(self, p):
-        return p.expr0 <= p.expr1
-
-    @_('expr GT expr')
-    def expr(self, p):
-        return p.expr0 > p.expr1
-
-    @_('expr GE expr')
-    def expr(self, p):
-        return p.expr0 >= p.expr1
-
-    @_('expr EQ expr')
-    def expr(self, p):
-        return p.expr0 == p.expr1
-
-    @_('expr NE expr')
-    def expr(self, p):
-        return p.expr0 != p.expr1
-    
-    @_('"(" expr ")"') #a chequear
-    def expr(self, p):
-        return p.expr
-    
-    @_('"{" expr "}"') #a chequear
-    def expr(self, p):
-        return p.expr
-    
-
-    #Manejo de errores:
-    def error(self, p):
-        if p:
-            print(f"Syntax error at token {p.type}, value {p.value}")
-        else:
-            print("Syntax error at EOF")
