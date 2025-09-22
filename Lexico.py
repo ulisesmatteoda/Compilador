@@ -1,38 +1,32 @@
 from sly import Lexer
 
 class Lexico(Lexer):
-
     # Nombre de los tokens.
-    tokens = {SUMA, RESTA, MULTIPLICACION, DIVISION, ASIGNACION1,
-            ASIGNACION2, LE, GE, LT, GT, NE, IGUAL, ID, IF, ELSE, ENTERO, ENDIF, PRINT, RETURN, 
+    tokens = {ASIGNACION1, ASIGNACION2, LE, LT, GE, GT, NE
+            ,IGUAL, ID, IF, ELSE, ENTERO, ENDIF, PRINT, RETURN, 
             UINT, FLECHA, DO, WHILE, STRING}
+    #esta dando un error en ID, ENTERO y STRING, no se definieron 
     
     #literales
-    literals = { '(', ')', '{', '}', ';' , '_', ',' }
+    literals = { '(', ')', '{', '}', ';' , '_', ',', '+', '-', '*', '/'}
 
     #caracteres a ignorar
     ignore = ' \t'
 
-    @_(r'##[\s\S]*?##')
-    def ignore_comment(self, t):
-        # [\s\S] = coincide con cualquier carácter, incluyendo saltos de línea. 
+    @_(r'##[\s\S]*?##')  # [\s\S] = coincide con cualquier carácter, incluyendo saltos de línea.
+    def ignore_comment(self, t): 
         pass
     
     #reglas para tokens
-
     FLECHA = r'->'
-    RESTA = r'\-'
-    SUMA =  r'\+'
-    MULTIPLICACION = r'\*'
-    DIVISION = r'/'
-    IGUAL = r'=='
-    ASIGNACION1 = r'='
+    ASIGNACION1 = r'=' #este tambien se puede pasar como literal, pero mas intuitivo llamarlos 1 y 2
     ASIGNACION2= r':='
     LE = r'<='
     LT = r'<'
     GE = r'>='
     GT = r'>'
     NE = r'!='
+    IGUAL = r'=='
     UINT = r'uint'
     IF= r'if'
     ELSE = r'else'
@@ -41,7 +35,6 @@ class Lexico(Lexer):
     RETURN = r'return'
     DO = r'do'
     WHILE = r'while'
-
 
     # Identificador: primera letra mayúscula, resto letras mayúsculas, dígitos o %
     @_(r'[A-Z][A-Z0-9%]*')
@@ -81,8 +74,7 @@ class Lexico(Lexer):
             print(f"Valor inválido: {t.value}")
         return t
 
-            #Lleva la cuenta de que linea estamos
-    @_(r'\n+')
+    @_(r'\n+') #Lleva la cuenta de que linea estamos
     def newline(self, t):
         self.lineno += t.value.count('\n')
 
@@ -90,7 +82,6 @@ class Lexico(Lexer):
         # t.value[0] es el carácter problemático, t.index es el desplazamiento
         print(f"[Lex] Carácter ilegal {t.value[0]!r} en línea {self.lineno}, índice {self.index}")
         self.index += 1  # importante: avanzar para no entrar en bucle
-
 
 
 if __name__ == '__main__':
@@ -122,4 +113,86 @@ if __name__ == '__main__':
         print(tok)
 
 
+class Sintactico(Parser):
+    tokens = Lexico.tokens
 
+    #Basicamente cual toma primero, va de menor a mayor prioridad. Tambien define asociatividad (left, right,nonassoc)(agrupa primero en alguna direccion)
+    precedence =(('nonassoc', 'LE', 'LT', 'GE', 'GT', 'NE', 'IGUAL') #nonassoc, no permite asociatividad sin parentesis, util en comparaciones para que no se haga algo asi: a < b <= c 
+                ,('left', '+', '-') #menos prioridad
+                ,('left', '*', '/') #mas prioridad
+                ,('right', 'UMINUS')) # usa UMINUS, con mas prioridad, para diferenciar el "-", numero negativo, de la resta
+    
+    def __init__(self): #estructura de apoyo para variables
+        self.names = { }
+
+    @_('ID "=" expr')
+    def statement(self, p):
+        self.names[p.NAME] = p.expr
+
+    @_('expr')
+    def statement(self, p): # se llama distinto por que es terminal
+        print(p.expr)
+
+    # El nombre del metodo define un no terminal, que estan en la regla de produccion
+
+    #Aritmetica:
+    @_('expr "+" expr') 
+    def expr(self, p):
+        return p.expr0 + p.expr1
+
+    @_('expr "-" expr')
+    def expr(self, p):
+        return p.expr0 - p.expr1
+
+    @_('expr "*" expr')
+    def expr(self, p):
+        return p.expr0 * p.expr1
+
+    @_('expr "/" expr')
+    def expr(self, p):
+        return p.expr0 / p.expr1
+
+    @_('"-" expr %prec UMINUS') #%prec indica que siga la prioridad de UMINUS y no la de '-'
+    def expr(self, p):
+        return -p.expr
+    
+    #Comparadores:
+    @_('expr LT expr')
+    def expr(self, p):
+        return p.expr0 < p.expr1
+
+    @_('expr LE expr')
+    def expr(self, p):
+        return p.expr0 <= p.expr1
+
+    @_('expr GT expr')
+    def expr(self, p):
+        return p.expr0 > p.expr1
+
+    @_('expr GE expr')
+    def expr(self, p):
+        return p.expr0 >= p.expr1
+
+    @_('expr EQ expr')
+    def expr(self, p):
+        return p.expr0 == p.expr1
+
+    @_('expr NE expr')
+    def expr(self, p):
+        return p.expr0 != p.expr1
+    
+    @_('"(" expr ")"') #a chequear
+    def expr(self, p):
+        return p.expr
+    
+    @_('"{" expr "}"') #a chequear
+    def expr(self, p):
+        return p.expr
+    
+
+    #Manejo de errores:
+    def error(self, p):
+        if p:
+            print(f"Syntax error at token {p.type}, value {p.value}")
+        else:
+            print("Syntax error at EOF")
