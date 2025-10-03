@@ -1,10 +1,11 @@
 from sly import Lexer
+from parser import Sintactico
 
 class Lexico(Lexer):
     # Nombre de los tokens.
-    tokens = {ASIGNACION1, ASIGNACION2, LE, LT, GE, GT, NE
-            ,IGUAL, IF, ELSE, ENDIF, PRINT, RETURN, 
-            UINT, FLECHA, DO, WHILE, ID, ENTERO, STRING}
+    tokens = {ASIGNACION1, ASIGNACION2, FLECHA, LE, LT, GE, GT, NE
+            , IGUAL, IF, ELSE, ENDIF, DO, WHILE, PRINT
+            , RETURN, UINT, ID, STRING, ENTERO}
     
     #literales
     literals = { '(', ')', '{', '}', ';' , '_', ',', '+', '-', '*', '/'}
@@ -17,23 +18,23 @@ class Lexico(Lexer):
         pass
     
     #reglas para tokens
-    FLECHA = r'->'
     ASIGNACION1 = r'=' 
     ASIGNACION2= r':='
+    FLECHA = r'->'
     LE = r'<='
     LT = r'<'
     GE = r'>='
     GT = r'>'
     NE = r'!='
     IGUAL = r'=='
-    UINT = r'uint'
     IF= r'if'
     ELSE = r'else'
     ENDIF = r'endif'
-    PRINT = r'print'
-    RETURN = r'return'
     DO = r'do'
     WHILE = r'while'
+    PRINT = r'print'
+    RETURN = r'return'
+    UINT = r'uint'
 
     # Identificador: primera letra mayúscula, resto letras mayúsculas, dígitos o %
     @_(r'[A-Z][A-Z0-9%]*')

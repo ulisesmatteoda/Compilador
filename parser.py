@@ -1,3 +1,4 @@
+from Lexico import Lexico
 
 class Sintactico(Parser):
     tokens = Lexico.tokens
@@ -40,8 +41,50 @@ class Sintactico(Parser):
     
     @_('ENTERO')
     def expr(self, p):
-        return int(p.ENTERO)
+        return int(p.ENTERO) #convierte el string a entero
     
+
+    #Declaracion de UINT
+    @_('UINT listaIDs ";" ')
+    def statement(self, p):
+        return ('decl', p.UINT, p.listaIDs)
+    
+    @_('ID')
+    def listaIDs(self, p):
+        return [p.ID]
+
+    @_('listaIDs "," ID')
+    def listaIDs(self, p):
+        return p.listaIDs + [p.ID] #de esta forma se hace recursivo y puede haber varios ID separados por ","
+    
+
+    #Declaracion de funciones
+    @_('UINT ID "(" parametrosFormales ")" "{" statements "}"')
+    def statement(self, p):
+        return ('decl', p.UINT, p.ID, p.parametrosFormales, p.statements)
+
+    @_('parametroFormal')
+    def parametrosFormales(self, p):
+        return [p.parametroFormal]
+
+    @_('parametrosFormales "," parametroFormal')
+    def parametrosFormales(self, p):
+        return p.parametrosFormales + [p.parametroFormal]
+
+    # Un parámetro formal
+    @_('semanticaPasaje TYPE ID') #semanticaPasaje se define en los temas 24-26
+    def parametroFormal(self, p):
+        return (p.semanticaPasaje, p.TYPE, p.ID)
+    
+    @_('RETURN expr ";"')
+    def statement(self, p):
+        return ('return', p.expr)
+
+    """
+    <parámetros_formales> ::= <parámetro_formal> | <parámetros_formales> "," <parámetro_formal>
+    <parámetro_formal> ::= <sem_pasaje> <tipo> ID
+    """
+
 
     #Aritmetica:
     @_('expr "+" expr') 
