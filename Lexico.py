@@ -3,9 +3,8 @@ from sly import Lexer
 class Lexico(Lexer):
     # Nombre de los tokens.
     tokens = {ASIGNACION1, ASIGNACION2, LE, LT, GE, GT, NE
-            ,IGUAL, ID, IF, ELSE, ENTERO, ENDIF, PRINT, RETURN, 
-            UINT, FLECHA, DO, WHILE, STRING}
-    #esta dando un error en ID, ENTERO y STRING, no se definieron 
+            ,IGUAL, IF, ELSE, ENDIF, PRINT, RETURN, 
+            UINT, FLECHA, DO, WHILE, ID, ENTERO, STRING}
     
     #literales
     literals = { '(', ')', '{', '}', ';' , '_', ',', '+', '-', '*', '/'}
@@ -19,7 +18,7 @@ class Lexico(Lexer):
     
     #reglas para tokens
     FLECHA = r'->'
-    ASIGNACION1 = r'=' #este tambien se puede pasar como literal, pero mas intuitivo llamarlos 1 y 2
+    ASIGNACION1 = r'=' 
     ASIGNACION2= r':='
     LE = r'<='
     LT = r'<'
@@ -60,6 +59,8 @@ class Lexico(Lexer):
         t.value = valor
         return t
     
+    """
+    Para el TP2 hay que eliminarlo
     @_(r'(\d+\.\d*|\.\d+)(D[+-]?\d+)?')
     def DFLOAT(self, t):
         try:
@@ -73,7 +74,8 @@ class Lexico(Lexer):
         except ValueError:
             print(f"Valor inválido: {t.value}")
         return t
-
+    """
+    
     @_(r'\n+') #Lleva la cuenta de que linea estamos
     def newline(self, t):
         self.lineno += t.value.count('\n')
@@ -125,15 +127,37 @@ class Sintactico(Parser):
     def __init__(self): #estructura de apoyo para variables
         self.names = { }
 
-    @_('ID "=" expr')
+ 
+    @_('ID "{" statements "}"')
+    def program(self, p):
+        print( "ID: " , p.ID,  ", Statements: " , p.statements)
+        #return ('program', p.ID, p.statements) #esto decia gpt
+    
+    @_('statements statement') #Para que pueda tener muchas sentencias, sino solamente podria tener una
+    def statements(self, p):
+        return p.statements + [p.statement]
+
+    @_('statement')
+    def statements(self, p):
+        return [p.statement]
+
+
+    @_('expr ;') #Cada sentencia tiene que terminar con ";"
     def statement(self, p):
-        self.names[p.NAME] = p.expr
+        return p.expr
 
-    @_('expr')
-    def statement(self, p): # se llama distinto por que es terminal
-        print(p.expr)
+    @_('ID')
+    def expr(self, p):
+        return p.ID
 
-    # El nombre del metodo define un no terminal, que estan en la regla de produccion
+    @_('STRING')
+    def expr(self, p):
+        return p.STRING
+    
+    @_('ENTERO')
+    def expr(self, p):
+        return int(p.ENTERO)
+    
 
     #Aritmetica:
     @_('expr "+" expr') 
@@ -156,6 +180,17 @@ class Sintactico(Parser):
     def expr(self, p):
         return -p.expr
     
+
+    #Asignacion:
+    @_('ID "=" expr')
+    def statement(self, p):
+        self.names[p.NAME] = p.expr
+
+    @_('ID ":=" expr')
+    def statement(self, p):
+        self.names[p.NAME] = p.expr
+
+
     #Comparadores:
     @_('expr LT expr')
     def expr(self, p):
@@ -181,14 +216,16 @@ class Sintactico(Parser):
     def expr(self, p):
         return p.expr0 != p.expr1
     
-    @_('"(" expr ")"') #a chequear
+    @_('"(" expr ")"') 
     def expr(self, p):
         return p.expr
     
-    @_('"{" expr "}"') #a chequear
+    @_('"{" expr "}"') 
     def expr(self, p):
         return p.expr
     
+
+
 
     #Manejo de errores:
     def error(self, p):
