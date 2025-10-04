@@ -5,7 +5,7 @@ class Lexico(Lexer):
     # Nombre de los tokens.
     tokens = {ASIGNACION1, ASIGNACION2, FLECHA, LE, LT, GE, GT, NE
             , IGUAL, IF, ELSE, ENDIF, DO, WHILE, PRINT
-            , RETURN, UINT, ID, STRING, ENTERO}
+            , RETURN, PRINT, ID, STRING, UINT}
     
     #literales
     literals = { '(', ')', '{', '}', ';' , '_', ',', '+', '-', '*', '/'}
@@ -34,7 +34,7 @@ class Lexico(Lexer):
     WHILE = r'while'
     PRINT = r'print'
     RETURN = r'return'
-    UINT = r'uint'
+    PRINT = r'print'
 
     # Identificador: primera letra mayúscula, resto letras mayúsculas, dígitos o %
     @_(r'[A-Z][A-Z0-9%]*')
@@ -50,9 +50,8 @@ class Lexico(Lexer):
         t.value = t.value[1:-1]
         return t
     
-    #UINT
     @_(r'\d+UI')
-    def ENTERO(self, t):
+    def UINT(self, t): #teoricamente son constantes
         # Quitar el sufijo 'UI'
         valor = int(t.value[:-2])
         if valor < 0 or valor > 65535:
