@@ -5,7 +5,7 @@ class Lexico(Lexer):
     # Nombre de los tokens.
     tokens = {ASIGNACION1, ASIGNACION2, FLECHA, LE, LT, GE, GT, NE
             , IGUAL, IF, ELSE, ENDIF, DO, WHILE, PRINT
-            , RETURN, PRINT, ID, STRING, UINT}
+            , RETURN, PRINT, CVR, ID, STRING, UINT}
     
     #literales
     literals = { '(', ')', '{', '}', ';' , '_', ',', '+', '-', '*', '/'}
@@ -35,6 +35,7 @@ class Lexico(Lexer):
     PRINT = r'print'
     RETURN = r'return'
     PRINT = r'print'
+    CVR = r'cvr' #copia-valor-resultado
 
     # Identificador: primera letra mayúscula, resto letras mayúsculas, dígitos o %
     @_(r'[A-Z][A-Z0-9%]*')

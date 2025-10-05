@@ -54,7 +54,7 @@ class Sintactico(Parser):
     #Declaracion de UINT
     @_('UINT listaIDs ";" ')
     def sentencia_declarativa(self, p):
-        return ('decl', p.UINT, p.listaIDs)
+        return ('decl_uint', p.lineno, p.UINT, p.listaIDs)
     
     @_('ID')
     def listaIDs(self, p):
@@ -68,7 +68,7 @@ class Sintactico(Parser):
     #Declaracion de funciones 
     @_('UINT ID "(" parametros_formales ")" "{" statements "}"')
     def sentencia_declarativa(self, p):
-        return ('decl', p.UINT, p.ID, p.parametros_formales, p.statements)
+        return ('decl_func', p.UINT, p.ID, p.parametros_formales, p.statements)
 
     @_('parametro_formal')
     def parametros_formales(self, p):
@@ -77,10 +77,14 @@ class Sintactico(Parser):
     @_('parametros_formales "," parametro_formal')
     def parametros_formales(self, p):
         return p.parametros_formales + [p.parametro_formal]
+    
+    @_('CVR TYPE ID') 
+    def parametro_formal(self, p): #copia-valor-resultado, TEMA 26
+        return (p.CVR, p.TYPE, p.ID)
 
-    @_('sem_pasaje TYPE ID') #sem_pasaje se define en los temas 24-26
+    @_('TYPE ID') 
     def parametro_formal(self, p):
-        return (p.sem_pasaje, p.TYPE, p.ID)
+        return (p.TYPE, p.ID)
     
     @_('RETURN expr ";"')
     def statement(self, p):
@@ -97,20 +101,22 @@ class Sintactico(Parser):
     @_('ID ASIGNACION1 expr') #en asignaciones dice que puede ser operaciones aritmeticas, nosotros lo hicimos para que tambien puedan ser solo numeros, o llamados a funciones, etc
     def sentencia_ejecutable(self, p):
         self.names[p.NAME] = p.expr
+        return ('decl_asign', p.lineno, p.ID, p.ASIGNACION1, p.expr)
 
     @_('ID ASIGNACION2 expr')
     def sentencia_ejecutable(self, p):
         self.names[p.NAME] = p.expr
+        return ('decl_asign', p.lineno, p.ID, p.ASIGNACION2, p.expr)
 
     
     #Invocacion a funcion
     @_('ID "(" parametros_reales ")" ')
     def sentencia_ejecutable(self, p): # Esta es para cuando se llama sola en una linea, no por el valor que devuelve sino por sus efectos
-        return ('ejec_statement', p.ID, p.parametros_reales)
+        return ('ejec_func_statement', p.ID, p.parametros_reales)
     
     @_('ID "(" parametros_reales ")" ') #y esta para que pueda llamarse en asignaciones,parametros, etc, cuando devuelve un valor
     def expr(self, p):
-        return ('ejec_expr', p.ID, p.parametros_reales)
+        return ('ejec_func_expr', p.ID, p.parametros_reales)
     
     @_('expr FLECHA parametro_formal')
     def parametro_real(self, p):
@@ -128,11 +134,11 @@ class Sintactico(Parser):
     #Clausula IF
     @_('IF "(" condicion ")" bloque_sent_ejec ELSE bloque_sent_ejec ENDIF ";"')
     def sentencia_ejecutable(self, p):
-        return ('ejec', p.IF, p.condicion, p.bloque_sent_ejec0, p.bloque_sent_ejec1 , p.ELSE, p.ENDIF)
+        return ('ejec_if', p.lineno, p.IF, p.condicion, p.bloque_sent_ejec0, p.bloque_sent_ejec1 , p.ELSE, p.ENDIF)
     
     @_('IF "(" condicion ")" bloque_sent_ejec ENDIF ";"') #sin else
     def sentencia_ejecutable(self, p):
-        return ('ejec', p.IF, p.condicion, p.bloque_sent_ejec, p.ELSE, p.ENDIF)
+        return ('ejec_if', p.lineno, p.IF, p.condicion, p.bloque_sent_ejec, p.ELSE, p.ENDIF)
     
     @_('"(" comparacion ")"')
     def condicion(self, p):
@@ -158,17 +164,17 @@ class Sintactico(Parser):
     #Sentencia Print
     @_('PRINT "(" ' " ' STRING ' " ' ")" ";"') #le volvemos a poner las comillas que le sacamos en el lexer (a chequear si se puede fixear despues)
     def sentencia_ejecutable(self, p):
-        return ('ejec', p.PRINT, p.STRING)
+        return ('ejec_print', p.lineno,  p.PRINT, p.STRING)
     
     @_('PRINT "(" expr ")" ";"')
     def sentencia_ejecutable(self, p):
-        return ('ejec', p.PRINT, p.STRING)
+        return ('ejec_print', p.lineno, p.PRINT, p.STRING)
     
 
     #Sentencia do while
     @_('DO bloque_sent_ejec WHILE condicion')
     def sentencia_ejecutable(self, p):
-        return ('ejec', p.DO, p.bloque_sent_ejec, p.WHILE, p.condicion)
+        return ('ejec_while', p.lineno, p.DO, p.bloque_sent_ejec, p.WHILE, p.condicion)
     
 
     #Asignaciones multiples
@@ -177,7 +183,7 @@ class Sintactico(Parser):
         if len(p.lista_elementos) < len(p.lista_variables): #chequeo semantico
             raise Exception(f"Error semántico: se esperan al menos      {len(p.lista_variables)} valores, "
                             f"pero solo hay {len(p.lista_elementos)}")
-        return ('ejec', p.lista_variables, p.ASIGNACION1, p.lista_elementos)
+        return ('ejec_asign_mult', p.lineno, p.lista_variables, p.ASIGNACION1, p.lista_elementos)
     
     @_('ID')
     def lista_variables(self, p):
@@ -197,8 +203,27 @@ class Sintactico(Parser):
 
 
     #Prefijado Obligatorio
+    @_('ID "." ID')
+    def expr(self, p):
+        return (p.ID0, p.ID1)
+
+
+    #Semantica de pasaje de parametros: Copia-Valor-Resultado en declaracion de funciones
+    #en linea 88, en la parte de declaracion de funciones se agrego una regla 
+
+
+    #Expresiones lambda: En linea
+    @_('"(" TYPE ID ")" bloque_sent_ejec "(" ID ")"') #son statement, ya que solo se pueden usar en una linea, sino serian expr y se podrian usar en todas partes
+    def statement(self, p ):
+        return ('Expresion lambda', p.lineno, p.TYPE, p.ID0, p.bloque_sent_ejec, p.ID1)
+
+    @_('"(" TYPE ID ")" bloque_sent_ejec "(" UINT ")"') 
+    def statement(self, p ):
+        return ('Expresion lambda', p.lineno, p.TYPE, p.ID, p.bloque_sent_ejec, p.UINT)
     
 
+    #Conversiones: implicitas
+    #no hay que hacer nada, se explica en los tp 3 y 4
 
 
     #Aritmetica:
@@ -257,15 +282,27 @@ class Sintactico(Parser):
     def expr(self, p):
         return p.expr
     """
-        
+    """
     @_('"{" expr "}"') 
     def expr(self, p):
         return p.expr
-    
-
+    """
 
 
     #Manejo de errores:
+    @_('error ";"') #Para mensajes mas especificos
+    def sentencia_ejecutable(self, p):
+        print(f"Error en línea {p.lineno}: sentencia inválida. Token inesperado: {p.value}. Tipo: {p.type}")
+        return ('error_stmt')
+    
+    """ #Ejemplo error personalizado
+    @_('ID ":=" error ";"')
+    def sentencia_ejecutable(self, p):
+        print(f"[Error de asignación] Línea {p.lineno}: "
+            f"expresión inválida en el lado derecho de ':='")
+        return ('error_assign',)
+    """
+
     def error(self, p):
         if p:
             print(f"Syntax error at token {p.type}, value {p.value}")
