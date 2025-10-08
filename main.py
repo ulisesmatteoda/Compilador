@@ -6,7 +6,7 @@ if __name__ == '__main__':
     lexer = Lexico()
     parser = Sintactico()
 
-    with open("test1.txt") as f:
+    with open("test_err1.txt") as f:
         data = f.read()
 
     # Tokenizar

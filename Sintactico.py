@@ -11,15 +11,6 @@ class Sintactico(Parser):
                 ,('left', '*', '/') #mas prioridad
                 ,('right', 'UMINUS')) # usa UMINUS, con mas prioridad, para diferenciar el "-", numero negativo, de la resta
 
-    #PROBLEMAS PRINCIPALES:
-    # 1) Uso de uint_lista_de_variables y uint_ID, donde solo es una variable. Problema shift-reduce, no sabe
-    # cual de los dos elegir, por que arrancan igual, 'UINT variable'
-    # 2) Mismo problema con variable y ID, donde capaz dos reglas arrancan con variable o ID, y no sabe cual
-    # tomar, por defecto SLY hace shift y pregunta por el simbolo que le sigue, asi elije la regla. Se deberia 
-    # arreglar gramaticalmente
-    # 3) Ademas de estos shift-reduce, falta probar las estructuras(estos problemas no dejan que funcione) 
-
-
     #PROGRAMA GENERAL
     @_('ID "{" statements "}"')
     def program(self, p):
@@ -41,9 +32,6 @@ class Sintactico(Parser):
     def statement(self, p):
         return p.sentencia_ejecutable
 
-#    @_('expr ;') #Cada sentencia tiene que terminar con ";"
-#    def statement(self, p):
-#        return p.expr
     #Prefijado Obligatorio
     @_('ID opt_prefijo')
     def variable(self,p):
@@ -74,7 +62,6 @@ class Sintactico(Parser):
         return int(p.NUMERO) #convierte el string a entero
     
 
-    
     @_('UINT ID')
     def uint_id(self, p):#cabezera de declaracion, se usa en declaraciones de funciones, y expresiones lambda. Asi se evitan shitf-reduce
         return (p.UINT, p.ID)
@@ -127,7 +114,7 @@ class Sintactico(Parser):
     #Asignaciones
     @_('variable ASIGNACION2 expr ";"') # vamos a usar ASIGNACION1 para asignaciones multiples, y ASIGNACION2 para asignaciones normales
     def sentencia_ejecutable(self, p):
-        return ('decl_asign', p.variable, p.ASIGNACION2, p.expr)
+        return ('ejec_asign', p.variable, p.ASIGNACION2, p.expr)
 
     
     #Invocacion a funcion
@@ -208,7 +195,7 @@ class Sintactico(Parser):
 
 
     #Expresiones lambda: En linea
-    @_('"(" uint_id ")" bloque_sent_ejec "(" argumento ")"') #son statement, ya que solo se pueden usar en una linea, sino serian expr y se podrian usar en todas partes
+    @_('"(" uint_id ")" bloque_sent_ejec "(" argumento ")" ";"') #son statement, ya que solo se pueden usar en una linea, sino serian expr y se podrian usar en todas partes
     def sentencia_ejecutable(self, p ):
         return ('Expresion lambda', p.uint_id, p.bloque_sent_ejec, p.argumento)
 
@@ -216,9 +203,9 @@ class Sintactico(Parser):
     def argumento(self, p):
         return p.variable
 
-    @_('UINT')
+    @_('NUMERO')
     def argumento(self, p):
-        return int(p.UINT)
+        return int(p.NUMERO)
     
 
     #Conversiones: implicitas
@@ -272,7 +259,7 @@ class Sintactico(Parser):
     def comparacion(self, p):
         return ('ne', p.expr0, p.expr1)
     
- 
+    
      #Ejemplo error personalizado
 #    @_('ID ":=" error ";"')
 #    def sentencia_ejecutable(self, p):
@@ -282,6 +269,6 @@ class Sintactico(Parser):
 
     def error(self, p):
         if p:
-            print(f"Error de sintaxis en línea {p.lineno}: token inesperado '{p.value}' de tipo {p.type}")
+            print(f"Error de sintaxis en línea {p.lineno}: token inesperado '{p.value}' de tipo {p.type} en index: {p.index}")
         else:
             print("Error de sintaxis: fin de archivo inesperado")

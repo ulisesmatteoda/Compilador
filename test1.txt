@@ -9,28 +9,24 @@ TEST1 {
         return (Y); ## return ##
     }
 
-    A := F(A -> X);        ## llamada con parámetro real etiquetado ##
+    A := F(A -> X);  ## llamada con parámetro real etiquetado ##
 
     if (A > 2UI) ## if ##
         print(A); ## print variable ##
         ## print("Hola soy el print");  print texto ## 
     endif;
 
-    if (A > 2UI) { ## if con else ##
+    if (A == 2UI) { ## if con else ##
         print(A); ## print variable ##
         print("Hola soy el print"); ## print texto ## 
     } 
-    else 
-        uint E.J := P; ## bloque ejecutable con una sentencia sin corchetes, y uso de prefijado ##
+    else
+        E.J := P; ## bloque ejecutable con una sentencia sin corchetes, y uso de prefijado ##
     endif;
-
+    
     do { ## do while ##
         A := A - 1UI;
     } while (A > 0UI);
 
-    ## lambda en línea como sentencia (un parámetro) ##
-    (uint Z) { print(Z); } (10UI);
-
-
+    (uint Z) { print(Z); } (10UI); ## lambda en línea como sentencia (un parámetro) ##
 }
-

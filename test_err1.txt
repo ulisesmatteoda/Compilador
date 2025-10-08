@@ -1,0 +1,2 @@
+## Asignaciones multiples con mas lados a la izquierda y no a la derecha##
+A, B, C= 8UI, 9UI;

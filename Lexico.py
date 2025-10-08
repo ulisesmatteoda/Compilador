@@ -12,6 +12,7 @@ class Lexico(Lexer):
     #caracteres a ignorar
     ignore = ' \t'
 
+    #Comentarios
     @_(r'##[\s\S]*?##')  # [\s\S] = coincide con cualquier carácter, incluyendo saltos de línea.
     def ignore_comment(self, t): 
         pass

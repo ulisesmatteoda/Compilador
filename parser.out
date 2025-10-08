@@ -29,7 +29,7 @@ Rule 25    parametros_formales -> parametros_formales , parametro_formal
 Rule 26    parametros_formales -> parametro_formal
 Rule 27    parametro_formal -> UINT variable
 Rule 28    parametro_formal -> CVR UINT variable
-Rule 29    sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento )
+Rule 29    sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) ;
 Rule 30    sentencia_ejecutable -> lista_variables ASIGNACION1 lista_elementos ;
 Rule 31    sentencia_ejecutable -> DO bloque_sent_ejec WHILE ( comparacion ) ;
 Rule 32    sentencia_ejecutable -> PRINT ( expr ) ;
@@ -47,7 +47,7 @@ Rule 43    lista_sent_ejec -> lista_sent_ejec sentencia_ejecutable
 Rule 44    lista_sent_ejec -> sentencia_ejecutable
 Rule 45    lista_elementos -> lista_elementos , NUMERO
 Rule 46    lista_elementos -> NUMERO
-Rule 47    argumento -> UINT
+Rule 47    argumento -> NUMERO
 Rule 48    argumento -> variable
 Rule 49    comparacion -> expr NE expr  [precedence=nonassoc, level=1]
 Rule 50    comparacion -> expr EQ expr  [precedence=nonassoc, level=1]
@@ -66,7 +66,7 @@ Terminals, with rules where they appear:
 -                    : 10 13
 .                    : 8
 /                    : 11
-;                    : 22 30 31 32 33 34 35
+;                    : 22 29 30 31 32 33 34 35
 ASIGNACION1          : 30
 ASIGNACION2          : 34
 CVR                  : 28
@@ -82,11 +82,11 @@ IF                   : 33
 LE                   : 53
 LT                   : 54
 NE                   : 49
-NUMERO               : 16 45 46
+NUMERO               : 16 45 46 47
 PRINT                : 32
 RETURN               : 35
 STRING               : 17
-UINT                 : 19 20 27 28 47
+UINT                 : 19 20 27 28
 WHILE                : 31
 error                : 
 {                    : 1 21 41
@@ -144,7 +144,7 @@ state 3
     (3) statements -> . statements statement
     (4) statement -> . sentencia_ejecutable
     (5) statement -> . sentencia_declarativa
-    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento ) ;
     (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
     (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
     (32) sentencia_ejecutable -> . PRINT ( expr ) ;
@@ -195,7 +195,7 @@ state 5
     (3) statements -> statements . statement
     (4) statement -> . sentencia_ejecutable
     (5) statement -> . sentencia_declarativa
-    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento ) ;
     (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
     (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
     (32) sentencia_ejecutable -> . PRINT ( expr ) ;
@@ -267,7 +267,7 @@ state 8
 
 state 9
 
-    (29) sentencia_ejecutable -> ( . uint_id ) bloque_sent_ejec ( argumento )
+    (29) sentencia_ejecutable -> ( . uint_id ) bloque_sent_ejec ( argumento ) ;
     (19) uint_id -> . UINT ID
     UINT            shift and go to state 24
 
@@ -292,7 +292,7 @@ state 12
     (31) sentencia_ejecutable -> DO . bloque_sent_ejec WHILE ( comparacion ) ;
     (41) bloque_sent_ejec -> . { lista_sent_ejec }
     (42) bloque_sent_ejec -> . sentencia_ejecutable
-    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento ) ;
     (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
     (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
     (32) sentencia_ejecutable -> . PRINT ( expr ) ;
@@ -408,7 +408,7 @@ state 22
 
 state 23
 
-    (29) sentencia_ejecutable -> ( uint_id . ) bloque_sent_ejec ( argumento )
+    (29) sentencia_ejecutable -> ( uint_id . ) bloque_sent_ejec ( argumento ) ;
     )               shift and go to state 40
 
 
@@ -459,7 +459,7 @@ state 29
     (41) bloque_sent_ejec -> { . lista_sent_ejec }
     (43) lista_sent_ejec -> . lista_sent_ejec sentencia_ejecutable
     (44) lista_sent_ejec -> . sentencia_ejecutable
-    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento ) ;
     (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
     (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
     (32) sentencia_ejecutable -> . PRINT ( expr ) ;
@@ -653,10 +653,10 @@ state 39
 
 state 40
 
-    (29) sentencia_ejecutable -> ( uint_id ) . bloque_sent_ejec ( argumento )
+    (29) sentencia_ejecutable -> ( uint_id ) . bloque_sent_ejec ( argumento ) ;
     (41) bloque_sent_ejec -> . { lista_sent_ejec }
     (42) bloque_sent_ejec -> . sentencia_ejecutable
-    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento ) ;
     (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
     (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
     (32) sentencia_ejecutable -> . PRINT ( expr ) ;
@@ -747,7 +747,7 @@ state 50
 
     (41) bloque_sent_ejec -> { lista_sent_ejec . }
     (43) lista_sent_ejec -> lista_sent_ejec . sentencia_ejecutable
-    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento ) ;
     (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
     (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
     (32) sentencia_ejecutable -> . PRINT ( expr ) ;
@@ -974,7 +974,7 @@ state 62
 
 state 63
 
-    (29) sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec . ( argumento )
+    (29) sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec . ( argumento ) ;
     (               shift and go to state 89
 
 
@@ -1235,7 +1235,7 @@ state 80
     (33) sentencia_ejecutable -> IF ( comparacion ) . bloque_sent_ejec opt_else ENDIF ;
     (41) bloque_sent_ejec -> . { lista_sent_ejec }
     (42) bloque_sent_ejec -> . sentencia_ejecutable
-    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento ) ;
     (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
     (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
     (32) sentencia_ejecutable -> . PRINT ( expr ) ;
@@ -1420,11 +1420,11 @@ state 88
 
 state 89
 
-    (29) sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( . argumento )
-    (47) argumento -> . UINT
+    (29) sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( . argumento ) ;
+    (47) argumento -> . NUMERO
     (48) argumento -> . variable
     (6) variable -> . ID opt_prefijo
-    UINT            shift and go to state 112
+    NUMERO          shift and go to state 112
     ID              shift and go to state 4
 
     argumento                      shift and go to state 111
@@ -1437,7 +1437,7 @@ state 90
     (3) statements -> . statements statement
     (4) statement -> . sentencia_ejecutable
     (5) statement -> . sentencia_declarativa
-    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento ) ;
     (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
     (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
     (32) sentencia_ejecutable -> . PRINT ( expr ) ;
@@ -1740,14 +1740,14 @@ state 110
 
 state 111
 
-    (29) sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento . )
+    (29) sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento . ) ;
     )               shift and go to state 121
 
 
 state 112
 
-    (47) argumento -> UINT .
-    )               reduce using rule 47 (argumento -> UINT .)
+    (47) argumento -> NUMERO .
+    )               reduce using rule 47 (argumento -> NUMERO .)
 
 
 state 113
@@ -1762,7 +1762,7 @@ state 114
     (3) statements -> statements . statement
     (4) statement -> . sentencia_ejecutable
     (5) statement -> . sentencia_declarativa
-    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento ) ;
     (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
     (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
     (32) sentencia_ejecutable -> . PRINT ( expr ) ;
@@ -1861,7 +1861,7 @@ state 120
     (40) opt_else -> ELSE . bloque_sent_ejec
     (41) bloque_sent_ejec -> . { lista_sent_ejec }
     (42) bloque_sent_ejec -> . sentencia_ejecutable
-    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento ) ;
     (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
     (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
     (32) sentencia_ejecutable -> . PRINT ( expr ) ;
@@ -1886,18 +1886,8 @@ state 120
 
 state 121
 
-    (29) sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .
-    }               reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
-    (               reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
-    DO              reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
-    PRINT           reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
-    IF              reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
-    RETURN          reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
-    ID              reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
-    UINT            reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
-    WHILE           reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
-    ELSE            reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
-    ENDIF           reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
+    (29) sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) . ;
+    ;               shift and go to state 128
 
 
 state 122
@@ -1946,7 +1936,7 @@ state 125
 state 126
 
     (33) sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else ENDIF . ;
-    ;               shift and go to state 128
+    ;               shift and go to state 129
 
 
 state 127
@@ -1956,6 +1946,22 @@ state 127
 
 
 state 128
+
+    (29) sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) ; .
+    }               reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) ; .)
+    (               reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) ; .)
+    DO              reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) ; .)
+    PRINT           reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) ; .)
+    IF              reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) ; .)
+    RETURN          reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) ; .)
+    ID              reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) ; .)
+    UINT            reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) ; .)
+    WHILE           reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) ; .)
+    ELSE            reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) ; .)
+    ENDIF           reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) ; .)
+
+
+state 129
 
     (33) sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ; .
     }               reduce using rule 33 (sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ; .)
