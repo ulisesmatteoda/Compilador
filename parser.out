@@ -1,0 +1,1971 @@
+Grammar:
+
+Rule 0     S' -> program
+Rule 1     program -> ID { statements }
+Rule 2     statements -> statement
+Rule 3     statements -> statements statement
+Rule 4     statement -> sentencia_ejecutable
+Rule 5     statement -> sentencia_declarativa
+Rule 6     variable -> ID opt_prefijo
+Rule 7     opt_prefijo -> <empty>
+Rule 8     opt_prefijo -> . ID
+Rule 9     expr -> atom_expr
+Rule 10    atom_expr -> - expr  [precedence=right, level=4]
+Rule 11    atom_expr -> expr / expr  [precedence=left, level=3]
+Rule 12    atom_expr -> expr * expr  [precedence=left, level=3]
+Rule 13    atom_expr -> expr - expr  [precedence=left, level=2]
+Rule 14    atom_expr -> expr + expr  [precedence=left, level=2]
+Rule 15    atom_expr -> ID ( parametros_reales )
+Rule 16    atom_expr -> NUMERO
+Rule 17    atom_expr -> STRING
+Rule 18    atom_expr -> variable
+Rule 19    uint_id -> UINT ID
+Rule 20    uint_variables -> UINT lista_variables
+Rule 21    sentencia_declarativa -> uint_id ( parametros_formales ) { statements }
+Rule 22    sentencia_declarativa -> uint_variables ;
+Rule 23    lista_variables -> lista_variables , variable
+Rule 24    lista_variables -> variable
+Rule 25    parametros_formales -> parametros_formales , parametro_formal
+Rule 26    parametros_formales -> parametro_formal
+Rule 27    parametro_formal -> UINT variable
+Rule 28    parametro_formal -> CVR UINT variable
+Rule 29    sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento )
+Rule 30    sentencia_ejecutable -> lista_variables ASIGNACION1 lista_elementos ;
+Rule 31    sentencia_ejecutable -> DO bloque_sent_ejec WHILE ( comparacion ) ;
+Rule 32    sentencia_ejecutable -> PRINT ( expr ) ;
+Rule 33    sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ;
+Rule 34    sentencia_ejecutable -> variable ASIGNACION2 expr ;
+Rule 35    sentencia_ejecutable -> RETURN ( expr ) ;
+Rule 36    parametro_real -> expr FLECHA variable
+Rule 37    parametros_reales -> parametros_reales , parametro_real
+Rule 38    parametros_reales -> parametro_real
+Rule 39    opt_else -> <empty>
+Rule 40    opt_else -> ELSE bloque_sent_ejec
+Rule 41    bloque_sent_ejec -> { lista_sent_ejec }
+Rule 42    bloque_sent_ejec -> sentencia_ejecutable
+Rule 43    lista_sent_ejec -> lista_sent_ejec sentencia_ejecutable
+Rule 44    lista_sent_ejec -> sentencia_ejecutable
+Rule 45    lista_elementos -> lista_elementos , NUMERO
+Rule 46    lista_elementos -> NUMERO
+Rule 47    argumento -> UINT
+Rule 48    argumento -> variable
+Rule 49    comparacion -> expr NE expr  [precedence=nonassoc, level=1]
+Rule 50    comparacion -> expr EQ expr  [precedence=nonassoc, level=1]
+Rule 51    comparacion -> expr GE expr  [precedence=nonassoc, level=1]
+Rule 52    comparacion -> expr GT expr  [precedence=nonassoc, level=1]
+Rule 53    comparacion -> expr LE expr  [precedence=nonassoc, level=1]
+Rule 54    comparacion -> expr LT expr  [precedence=nonassoc, level=1]
+
+Terminals, with rules where they appear:
+
+(                    : 15 21 29 29 31 32 33 35
+)                    : 15 21 29 29 31 32 33 35
+*                    : 12
++                    : 14
+,                    : 23 25 37 45
+-                    : 10 13
+.                    : 8
+/                    : 11
+;                    : 22 30 31 32 33 34 35
+ASIGNACION1          : 30
+ASIGNACION2          : 34
+CVR                  : 28
+DO                   : 31
+ELSE                 : 40
+ENDIF                : 33
+EQ                   : 50
+FLECHA               : 36
+GE                   : 51
+GT                   : 52
+ID                   : 1 6 8 15 19
+IF                   : 33
+LE                   : 53
+LT                   : 54
+NE                   : 49
+NUMERO               : 16 45 46
+PRINT                : 32
+RETURN               : 35
+STRING               : 17
+UINT                 : 19 20 27 28 47
+WHILE                : 31
+error                : 
+{                    : 1 21 41
+}                    : 1 21 41
+
+Nonterminals, with rules where they appear:
+
+argumento            : 29
+atom_expr            : 9
+bloque_sent_ejec     : 29 31 33 40
+comparacion          : 31 33
+expr                 : 10 11 11 12 12 13 13 14 14 32 34 35 36 49 49 50 50 51 51 52 52 53 53 54 54
+lista_elementos      : 30 45
+lista_sent_ejec      : 41 43
+lista_variables      : 20 23 30
+opt_else             : 33
+opt_prefijo          : 6
+parametro_formal     : 25 26
+parametro_real       : 37 38
+parametros_formales  : 21 25
+parametros_reales    : 15 37
+program              : 0
+sentencia_declarativa : 5
+sentencia_ejecutable : 4 42 43 44
+statement            : 2 3
+statements           : 1 3 21
+uint_id              : 21 29
+uint_variables       : 22
+variable             : 18 23 24 27 28 34 36 48
+
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . ID { statements }
+    ID              shift and go to state 2
+
+    program                        shift and go to state 1
+
+state 1
+
+    (0) S' -> program .
+
+
+state 2
+
+    (1) program -> ID . { statements }
+    {               shift and go to state 3
+
+
+state 3
+
+    (1) program -> ID { . statements }
+    (2) statements -> . statement
+    (3) statements -> . statements statement
+    (4) statement -> . sentencia_ejecutable
+    (5) statement -> . sentencia_declarativa
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
+    (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
+    (32) sentencia_ejecutable -> . PRINT ( expr ) ;
+    (33) sentencia_ejecutable -> . IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ;
+    (34) sentencia_ejecutable -> . variable ASIGNACION2 expr ;
+    (35) sentencia_ejecutable -> . RETURN ( expr ) ;
+    (21) sentencia_declarativa -> . uint_id ( parametros_formales ) { statements }
+    (22) sentencia_declarativa -> . uint_variables ;
+    (23) lista_variables -> . lista_variables , variable
+    (24) lista_variables -> . variable
+    (6) variable -> . ID opt_prefijo
+    (19) uint_id -> . UINT ID
+    (20) uint_variables -> . UINT lista_variables
+    (               shift and go to state 9
+    DO              shift and go to state 12
+    PRINT           shift and go to state 13
+    IF              shift and go to state 14
+    RETURN          shift and go to state 16
+    ID              shift and go to state 4
+    UINT            shift and go to state 18
+
+    statements                     shift and go to state 5
+    statement                      shift and go to state 6
+    sentencia_ejecutable           shift and go to state 7
+    sentencia_declarativa          shift and go to state 8
+    uint_id                        shift and go to state 10
+    lista_variables                shift and go to state 11
+    variable                       shift and go to state 15
+    uint_variables                 shift and go to state 17
+
+state 4
+
+    (6) variable -> ID . opt_prefijo
+    (7) opt_prefijo -> .
+    (8) opt_prefijo -> . . ID
+    ASIGNACION2     reduce using rule 7 (opt_prefijo -> .)
+    ASIGNACION1     reduce using rule 7 (opt_prefijo -> .)
+    ,               reduce using rule 7 (opt_prefijo -> .)
+    ;               reduce using rule 7 (opt_prefijo -> .)
+    )               reduce using rule 7 (opt_prefijo -> .)
+    .               shift and go to state 20
+
+    opt_prefijo                    shift and go to state 19
+
+state 5
+
+    (1) program -> ID { statements . }
+    (3) statements -> statements . statement
+    (4) statement -> . sentencia_ejecutable
+    (5) statement -> . sentencia_declarativa
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
+    (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
+    (32) sentencia_ejecutable -> . PRINT ( expr ) ;
+    (33) sentencia_ejecutable -> . IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ;
+    (34) sentencia_ejecutable -> . variable ASIGNACION2 expr ;
+    (35) sentencia_ejecutable -> . RETURN ( expr ) ;
+    (21) sentencia_declarativa -> . uint_id ( parametros_formales ) { statements }
+    (22) sentencia_declarativa -> . uint_variables ;
+    (23) lista_variables -> . lista_variables , variable
+    (24) lista_variables -> . variable
+    (6) variable -> . ID opt_prefijo
+    (19) uint_id -> . UINT ID
+    (20) uint_variables -> . UINT lista_variables
+    }               shift and go to state 21
+    (               shift and go to state 9
+    DO              shift and go to state 12
+    PRINT           shift and go to state 13
+    IF              shift and go to state 14
+    RETURN          shift and go to state 16
+    ID              shift and go to state 4
+    UINT            shift and go to state 18
+
+    statement                      shift and go to state 22
+    sentencia_ejecutable           shift and go to state 7
+    sentencia_declarativa          shift and go to state 8
+    uint_id                        shift and go to state 10
+    lista_variables                shift and go to state 11
+    variable                       shift and go to state 15
+    uint_variables                 shift and go to state 17
+
+state 6
+
+    (2) statements -> statement .
+    }               reduce using rule 2 (statements -> statement .)
+    (               reduce using rule 2 (statements -> statement .)
+    DO              reduce using rule 2 (statements -> statement .)
+    PRINT           reduce using rule 2 (statements -> statement .)
+    IF              reduce using rule 2 (statements -> statement .)
+    RETURN          reduce using rule 2 (statements -> statement .)
+    ID              reduce using rule 2 (statements -> statement .)
+    UINT            reduce using rule 2 (statements -> statement .)
+
+
+state 7
+
+    (4) statement -> sentencia_ejecutable .
+    }               reduce using rule 4 (statement -> sentencia_ejecutable .)
+    (               reduce using rule 4 (statement -> sentencia_ejecutable .)
+    DO              reduce using rule 4 (statement -> sentencia_ejecutable .)
+    PRINT           reduce using rule 4 (statement -> sentencia_ejecutable .)
+    IF              reduce using rule 4 (statement -> sentencia_ejecutable .)
+    RETURN          reduce using rule 4 (statement -> sentencia_ejecutable .)
+    ID              reduce using rule 4 (statement -> sentencia_ejecutable .)
+    UINT            reduce using rule 4 (statement -> sentencia_ejecutable .)
+
+
+state 8
+
+    (5) statement -> sentencia_declarativa .
+    }               reduce using rule 5 (statement -> sentencia_declarativa .)
+    (               reduce using rule 5 (statement -> sentencia_declarativa .)
+    DO              reduce using rule 5 (statement -> sentencia_declarativa .)
+    PRINT           reduce using rule 5 (statement -> sentencia_declarativa .)
+    IF              reduce using rule 5 (statement -> sentencia_declarativa .)
+    RETURN          reduce using rule 5 (statement -> sentencia_declarativa .)
+    ID              reduce using rule 5 (statement -> sentencia_declarativa .)
+    UINT            reduce using rule 5 (statement -> sentencia_declarativa .)
+
+
+state 9
+
+    (29) sentencia_ejecutable -> ( . uint_id ) bloque_sent_ejec ( argumento )
+    (19) uint_id -> . UINT ID
+    UINT            shift and go to state 24
+
+    uint_id                        shift and go to state 23
+
+state 10
+
+    (21) sentencia_declarativa -> uint_id . ( parametros_formales ) { statements }
+    (               shift and go to state 25
+
+
+state 11
+
+    (30) sentencia_ejecutable -> lista_variables . ASIGNACION1 lista_elementos ;
+    (23) lista_variables -> lista_variables . , variable
+    ASIGNACION1     shift and go to state 26
+    ,               shift and go to state 27
+
+
+state 12
+
+    (31) sentencia_ejecutable -> DO . bloque_sent_ejec WHILE ( comparacion ) ;
+    (41) bloque_sent_ejec -> . { lista_sent_ejec }
+    (42) bloque_sent_ejec -> . sentencia_ejecutable
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
+    (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
+    (32) sentencia_ejecutable -> . PRINT ( expr ) ;
+    (33) sentencia_ejecutable -> . IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ;
+    (34) sentencia_ejecutable -> . variable ASIGNACION2 expr ;
+    (35) sentencia_ejecutable -> . RETURN ( expr ) ;
+    (23) lista_variables -> . lista_variables , variable
+    (24) lista_variables -> . variable
+    (6) variable -> . ID opt_prefijo
+    {               shift and go to state 29
+    (               shift and go to state 9
+    DO              shift and go to state 12
+    PRINT           shift and go to state 13
+    IF              shift and go to state 14
+    RETURN          shift and go to state 16
+    ID              shift and go to state 4
+
+    bloque_sent_ejec               shift and go to state 28
+    sentencia_ejecutable           shift and go to state 30
+    lista_variables                shift and go to state 11
+    variable                       shift and go to state 15
+
+state 13
+
+    (32) sentencia_ejecutable -> PRINT . ( expr ) ;
+    (               shift and go to state 31
+
+
+state 14
+
+    (33) sentencia_ejecutable -> IF . ( comparacion ) bloque_sent_ejec opt_else ENDIF ;
+    (               shift and go to state 32
+
+
+state 15
+
+    (34) sentencia_ejecutable -> variable . ASIGNACION2 expr ;
+    (24) lista_variables -> variable .
+    ASIGNACION2     shift and go to state 33
+    ASIGNACION1     reduce using rule 24 (lista_variables -> variable .)
+    ,               reduce using rule 24 (lista_variables -> variable .)
+
+
+state 16
+
+    (35) sentencia_ejecutable -> RETURN . ( expr ) ;
+    (               shift and go to state 34
+
+
+state 17
+
+    (22) sentencia_declarativa -> uint_variables . ;
+    ;               shift and go to state 35
+
+
+state 18
+
+    (19) uint_id -> UINT . ID
+    (20) uint_variables -> UINT . lista_variables
+    (23) lista_variables -> . lista_variables , variable
+    (24) lista_variables -> . variable
+    (6) variable -> . ID opt_prefijo
+    ID              shift and go to state 36
+
+    lista_variables                shift and go to state 37
+    variable                       shift and go to state 38
+
+state 19
+
+    (6) variable -> ID opt_prefijo .
+    ASIGNACION2     reduce using rule 6 (variable -> ID opt_prefijo .)
+    ASIGNACION1     reduce using rule 6 (variable -> ID opt_prefijo .)
+    ,               reduce using rule 6 (variable -> ID opt_prefijo .)
+    ;               reduce using rule 6 (variable -> ID opt_prefijo .)
+    )               reduce using rule 6 (variable -> ID opt_prefijo .)
+    /               reduce using rule 6 (variable -> ID opt_prefijo .)
+    *               reduce using rule 6 (variable -> ID opt_prefijo .)
+    -               reduce using rule 6 (variable -> ID opt_prefijo .)
+    +               reduce using rule 6 (variable -> ID opt_prefijo .)
+    NE              reduce using rule 6 (variable -> ID opt_prefijo .)
+    EQ              reduce using rule 6 (variable -> ID opt_prefijo .)
+    GE              reduce using rule 6 (variable -> ID opt_prefijo .)
+    GT              reduce using rule 6 (variable -> ID opt_prefijo .)
+    LE              reduce using rule 6 (variable -> ID opt_prefijo .)
+    LT              reduce using rule 6 (variable -> ID opt_prefijo .)
+    FLECHA          reduce using rule 6 (variable -> ID opt_prefijo .)
+
+
+state 20
+
+    (8) opt_prefijo -> . . ID
+    ID              shift and go to state 39
+
+
+state 21
+
+    (1) program -> ID { statements } .
+    $end            reduce using rule 1 (program -> ID { statements } .)
+
+
+state 22
+
+    (3) statements -> statements statement .
+    }               reduce using rule 3 (statements -> statements statement .)
+    (               reduce using rule 3 (statements -> statements statement .)
+    DO              reduce using rule 3 (statements -> statements statement .)
+    PRINT           reduce using rule 3 (statements -> statements statement .)
+    IF              reduce using rule 3 (statements -> statements statement .)
+    RETURN          reduce using rule 3 (statements -> statements statement .)
+    ID              reduce using rule 3 (statements -> statements statement .)
+    UINT            reduce using rule 3 (statements -> statements statement .)
+
+
+state 23
+
+    (29) sentencia_ejecutable -> ( uint_id . ) bloque_sent_ejec ( argumento )
+    )               shift and go to state 40
+
+
+state 24
+
+    (19) uint_id -> UINT . ID
+    ID              shift and go to state 41
+
+
+state 25
+
+    (21) sentencia_declarativa -> uint_id ( . parametros_formales ) { statements }
+    (25) parametros_formales -> . parametros_formales , parametro_formal
+    (26) parametros_formales -> . parametro_formal
+    (27) parametro_formal -> . UINT variable
+    (28) parametro_formal -> . CVR UINT variable
+    UINT            shift and go to state 44
+    CVR             shift and go to state 45
+
+    parametros_formales            shift and go to state 42
+    parametro_formal               shift and go to state 43
+
+state 26
+
+    (30) sentencia_ejecutable -> lista_variables ASIGNACION1 . lista_elementos ;
+    (45) lista_elementos -> . lista_elementos , NUMERO
+    (46) lista_elementos -> . NUMERO
+    NUMERO          shift and go to state 47
+
+    lista_elementos                shift and go to state 46
+
+state 27
+
+    (23) lista_variables -> lista_variables , . variable
+    (6) variable -> . ID opt_prefijo
+    ID              shift and go to state 4
+
+    variable                       shift and go to state 48
+
+state 28
+
+    (31) sentencia_ejecutable -> DO bloque_sent_ejec . WHILE ( comparacion ) ;
+    WHILE           shift and go to state 49
+
+
+state 29
+
+    (41) bloque_sent_ejec -> { . lista_sent_ejec }
+    (43) lista_sent_ejec -> . lista_sent_ejec sentencia_ejecutable
+    (44) lista_sent_ejec -> . sentencia_ejecutable
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
+    (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
+    (32) sentencia_ejecutable -> . PRINT ( expr ) ;
+    (33) sentencia_ejecutable -> . IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ;
+    (34) sentencia_ejecutable -> . variable ASIGNACION2 expr ;
+    (35) sentencia_ejecutable -> . RETURN ( expr ) ;
+    (23) lista_variables -> . lista_variables , variable
+    (24) lista_variables -> . variable
+    (6) variable -> . ID opt_prefijo
+    (               shift and go to state 9
+    DO              shift and go to state 12
+    PRINT           shift and go to state 13
+    IF              shift and go to state 14
+    RETURN          shift and go to state 16
+    ID              shift and go to state 4
+
+    lista_sent_ejec                shift and go to state 50
+    sentencia_ejecutable           shift and go to state 51
+    lista_variables                shift and go to state 11
+    variable                       shift and go to state 15
+
+state 30
+
+    (42) bloque_sent_ejec -> sentencia_ejecutable .
+    WHILE           reduce using rule 42 (bloque_sent_ejec -> sentencia_ejecutable .)
+    (               reduce using rule 42 (bloque_sent_ejec -> sentencia_ejecutable .)
+    ELSE            reduce using rule 42 (bloque_sent_ejec -> sentencia_ejecutable .)
+    ENDIF           reduce using rule 42 (bloque_sent_ejec -> sentencia_ejecutable .)
+
+
+state 31
+
+    (32) sentencia_ejecutable -> PRINT ( . expr ) ;
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    expr                           shift and go to state 52
+    atom_expr                      shift and go to state 53
+    variable                       shift and go to state 58
+
+state 32
+
+    (33) sentencia_ejecutable -> IF ( . comparacion ) bloque_sent_ejec opt_else ENDIF ;
+    (49) comparacion -> . expr NE expr
+    (50) comparacion -> . expr EQ expr
+    (51) comparacion -> . expr GE expr
+    (52) comparacion -> . expr GT expr
+    (53) comparacion -> . expr LE expr
+    (54) comparacion -> . expr LT expr
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    comparacion                    shift and go to state 59
+    expr                           shift and go to state 60
+    atom_expr                      shift and go to state 53
+    variable                       shift and go to state 58
+
+state 33
+
+    (34) sentencia_ejecutable -> variable ASIGNACION2 . expr ;
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    variable                       shift and go to state 58
+    expr                           shift and go to state 61
+    atom_expr                      shift and go to state 53
+
+state 34
+
+    (35) sentencia_ejecutable -> RETURN ( . expr ) ;
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    expr                           shift and go to state 62
+    atom_expr                      shift and go to state 53
+    variable                       shift and go to state 58
+
+state 35
+
+    (22) sentencia_declarativa -> uint_variables ; .
+    }               reduce using rule 22 (sentencia_declarativa -> uint_variables ; .)
+    (               reduce using rule 22 (sentencia_declarativa -> uint_variables ; .)
+    DO              reduce using rule 22 (sentencia_declarativa -> uint_variables ; .)
+    PRINT           reduce using rule 22 (sentencia_declarativa -> uint_variables ; .)
+    IF              reduce using rule 22 (sentencia_declarativa -> uint_variables ; .)
+    RETURN          reduce using rule 22 (sentencia_declarativa -> uint_variables ; .)
+    ID              reduce using rule 22 (sentencia_declarativa -> uint_variables ; .)
+    UINT            reduce using rule 22 (sentencia_declarativa -> uint_variables ; .)
+
+
+state 36
+
+    (19) uint_id -> UINT ID .
+    (6) variable -> ID . opt_prefijo
+    (7) opt_prefijo -> .
+    (8) opt_prefijo -> . . ID
+    (               reduce using rule 19 (uint_id -> UINT ID .)
+    ,               reduce using rule 7 (opt_prefijo -> .)
+    ;               reduce using rule 7 (opt_prefijo -> .)
+    .               shift and go to state 20
+
+    opt_prefijo                    shift and go to state 19
+
+state 37
+
+    (20) uint_variables -> UINT lista_variables .
+    (23) lista_variables -> lista_variables . , variable
+    ;               reduce using rule 20 (uint_variables -> UINT lista_variables .)
+    ,               shift and go to state 27
+
+
+state 38
+
+    (24) lista_variables -> variable .
+    ,               reduce using rule 24 (lista_variables -> variable .)
+    ;               reduce using rule 24 (lista_variables -> variable .)
+
+
+state 39
+
+    (8) opt_prefijo -> . ID .
+    ASIGNACION2     reduce using rule 8 (opt_prefijo -> . ID .)
+    ASIGNACION1     reduce using rule 8 (opt_prefijo -> . ID .)
+    ,               reduce using rule 8 (opt_prefijo -> . ID .)
+    ;               reduce using rule 8 (opt_prefijo -> . ID .)
+    )               reduce using rule 8 (opt_prefijo -> . ID .)
+    /               reduce using rule 8 (opt_prefijo -> . ID .)
+    *               reduce using rule 8 (opt_prefijo -> . ID .)
+    -               reduce using rule 8 (opt_prefijo -> . ID .)
+    +               reduce using rule 8 (opt_prefijo -> . ID .)
+    NE              reduce using rule 8 (opt_prefijo -> . ID .)
+    EQ              reduce using rule 8 (opt_prefijo -> . ID .)
+    GE              reduce using rule 8 (opt_prefijo -> . ID .)
+    GT              reduce using rule 8 (opt_prefijo -> . ID .)
+    LE              reduce using rule 8 (opt_prefijo -> . ID .)
+    LT              reduce using rule 8 (opt_prefijo -> . ID .)
+    FLECHA          reduce using rule 8 (opt_prefijo -> . ID .)
+
+
+state 40
+
+    (29) sentencia_ejecutable -> ( uint_id ) . bloque_sent_ejec ( argumento )
+    (41) bloque_sent_ejec -> . { lista_sent_ejec }
+    (42) bloque_sent_ejec -> . sentencia_ejecutable
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
+    (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
+    (32) sentencia_ejecutable -> . PRINT ( expr ) ;
+    (33) sentencia_ejecutable -> . IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ;
+    (34) sentencia_ejecutable -> . variable ASIGNACION2 expr ;
+    (35) sentencia_ejecutable -> . RETURN ( expr ) ;
+    (23) lista_variables -> . lista_variables , variable
+    (24) lista_variables -> . variable
+    (6) variable -> . ID opt_prefijo
+    {               shift and go to state 29
+    (               shift and go to state 9
+    DO              shift and go to state 12
+    PRINT           shift and go to state 13
+    IF              shift and go to state 14
+    RETURN          shift and go to state 16
+    ID              shift and go to state 4
+
+    bloque_sent_ejec               shift and go to state 63
+    sentencia_ejecutable           shift and go to state 30
+    lista_variables                shift and go to state 11
+    variable                       shift and go to state 15
+
+state 41
+
+    (19) uint_id -> UINT ID .
+    )               reduce using rule 19 (uint_id -> UINT ID .)
+
+
+state 42
+
+    (21) sentencia_declarativa -> uint_id ( parametros_formales . ) { statements }
+    (25) parametros_formales -> parametros_formales . , parametro_formal
+    )               shift and go to state 64
+    ,               shift and go to state 65
+
+
+state 43
+
+    (26) parametros_formales -> parametro_formal .
+    )               reduce using rule 26 (parametros_formales -> parametro_formal .)
+    ,               reduce using rule 26 (parametros_formales -> parametro_formal .)
+
+
+state 44
+
+    (27) parametro_formal -> UINT . variable
+    (6) variable -> . ID opt_prefijo
+    ID              shift and go to state 4
+
+    variable                       shift and go to state 66
+
+state 45
+
+    (28) parametro_formal -> CVR . UINT variable
+    UINT            shift and go to state 67
+
+
+state 46
+
+    (30) sentencia_ejecutable -> lista_variables ASIGNACION1 lista_elementos . ;
+    (45) lista_elementos -> lista_elementos . , NUMERO
+    ;               shift and go to state 68
+    ,               shift and go to state 69
+
+
+state 47
+
+    (46) lista_elementos -> NUMERO .
+    ;               reduce using rule 46 (lista_elementos -> NUMERO .)
+    ,               reduce using rule 46 (lista_elementos -> NUMERO .)
+
+
+state 48
+
+    (23) lista_variables -> lista_variables , variable .
+    ASIGNACION1     reduce using rule 23 (lista_variables -> lista_variables , variable .)
+    ,               reduce using rule 23 (lista_variables -> lista_variables , variable .)
+    ;               reduce using rule 23 (lista_variables -> lista_variables , variable .)
+
+
+state 49
+
+    (31) sentencia_ejecutable -> DO bloque_sent_ejec WHILE . ( comparacion ) ;
+    (               shift and go to state 70
+
+
+state 50
+
+    (41) bloque_sent_ejec -> { lista_sent_ejec . }
+    (43) lista_sent_ejec -> lista_sent_ejec . sentencia_ejecutable
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
+    (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
+    (32) sentencia_ejecutable -> . PRINT ( expr ) ;
+    (33) sentencia_ejecutable -> . IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ;
+    (34) sentencia_ejecutable -> . variable ASIGNACION2 expr ;
+    (35) sentencia_ejecutable -> . RETURN ( expr ) ;
+    (23) lista_variables -> . lista_variables , variable
+    (24) lista_variables -> . variable
+    (6) variable -> . ID opt_prefijo
+    }               shift and go to state 71
+    (               shift and go to state 9
+    DO              shift and go to state 12
+    PRINT           shift and go to state 13
+    IF              shift and go to state 14
+    RETURN          shift and go to state 16
+    ID              shift and go to state 4
+
+    sentencia_ejecutable           shift and go to state 72
+    lista_variables                shift and go to state 11
+    variable                       shift and go to state 15
+
+state 51
+
+    (44) lista_sent_ejec -> sentencia_ejecutable .
+    }               reduce using rule 44 (lista_sent_ejec -> sentencia_ejecutable .)
+    (               reduce using rule 44 (lista_sent_ejec -> sentencia_ejecutable .)
+    DO              reduce using rule 44 (lista_sent_ejec -> sentencia_ejecutable .)
+    PRINT           reduce using rule 44 (lista_sent_ejec -> sentencia_ejecutable .)
+    IF              reduce using rule 44 (lista_sent_ejec -> sentencia_ejecutable .)
+    RETURN          reduce using rule 44 (lista_sent_ejec -> sentencia_ejecutable .)
+    ID              reduce using rule 44 (lista_sent_ejec -> sentencia_ejecutable .)
+
+
+state 52
+
+    (32) sentencia_ejecutable -> PRINT ( expr . ) ;
+    (11) atom_expr -> expr . / expr
+    (12) atom_expr -> expr . * expr
+    (13) atom_expr -> expr . - expr
+    (14) atom_expr -> expr . + expr
+    )               shift and go to state 73
+    /               shift and go to state 74
+    *               shift and go to state 75
+    -               shift and go to state 76
+    +               shift and go to state 77
+
+
+state 53
+
+    (9) expr -> atom_expr .
+    )               reduce using rule 9 (expr -> atom_expr .)
+    /               reduce using rule 9 (expr -> atom_expr .)
+    *               reduce using rule 9 (expr -> atom_expr .)
+    -               reduce using rule 9 (expr -> atom_expr .)
+    +               reduce using rule 9 (expr -> atom_expr .)
+    NE              reduce using rule 9 (expr -> atom_expr .)
+    EQ              reduce using rule 9 (expr -> atom_expr .)
+    GE              reduce using rule 9 (expr -> atom_expr .)
+    GT              reduce using rule 9 (expr -> atom_expr .)
+    LE              reduce using rule 9 (expr -> atom_expr .)
+    LT              reduce using rule 9 (expr -> atom_expr .)
+    ;               reduce using rule 9 (expr -> atom_expr .)
+    FLECHA          reduce using rule 9 (expr -> atom_expr .)
+
+
+state 54
+
+    (10) atom_expr -> - . expr
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    expr                           shift and go to state 78
+    atom_expr                      shift and go to state 53
+    variable                       shift and go to state 58
+
+state 55
+
+    (15) atom_expr -> ID . ( parametros_reales )
+    (6) variable -> ID . opt_prefijo
+    (7) opt_prefijo -> .
+    (8) opt_prefijo -> . . ID
+    (               shift and go to state 79
+    )               reduce using rule 7 (opt_prefijo -> .)
+    /               reduce using rule 7 (opt_prefijo -> .)
+    *               reduce using rule 7 (opt_prefijo -> .)
+    -               reduce using rule 7 (opt_prefijo -> .)
+    +               reduce using rule 7 (opt_prefijo -> .)
+    NE              reduce using rule 7 (opt_prefijo -> .)
+    EQ              reduce using rule 7 (opt_prefijo -> .)
+    GE              reduce using rule 7 (opt_prefijo -> .)
+    GT              reduce using rule 7 (opt_prefijo -> .)
+    LE              reduce using rule 7 (opt_prefijo -> .)
+    LT              reduce using rule 7 (opt_prefijo -> .)
+    ;               reduce using rule 7 (opt_prefijo -> .)
+    FLECHA          reduce using rule 7 (opt_prefijo -> .)
+    .               shift and go to state 20
+
+    opt_prefijo                    shift and go to state 19
+
+state 56
+
+    (16) atom_expr -> NUMERO .
+    )               reduce using rule 16 (atom_expr -> NUMERO .)
+    /               reduce using rule 16 (atom_expr -> NUMERO .)
+    *               reduce using rule 16 (atom_expr -> NUMERO .)
+    -               reduce using rule 16 (atom_expr -> NUMERO .)
+    +               reduce using rule 16 (atom_expr -> NUMERO .)
+    NE              reduce using rule 16 (atom_expr -> NUMERO .)
+    EQ              reduce using rule 16 (atom_expr -> NUMERO .)
+    GE              reduce using rule 16 (atom_expr -> NUMERO .)
+    GT              reduce using rule 16 (atom_expr -> NUMERO .)
+    LE              reduce using rule 16 (atom_expr -> NUMERO .)
+    LT              reduce using rule 16 (atom_expr -> NUMERO .)
+    ;               reduce using rule 16 (atom_expr -> NUMERO .)
+    FLECHA          reduce using rule 16 (atom_expr -> NUMERO .)
+
+
+state 57
+
+    (17) atom_expr -> STRING .
+    )               reduce using rule 17 (atom_expr -> STRING .)
+    /               reduce using rule 17 (atom_expr -> STRING .)
+    *               reduce using rule 17 (atom_expr -> STRING .)
+    -               reduce using rule 17 (atom_expr -> STRING .)
+    +               reduce using rule 17 (atom_expr -> STRING .)
+    NE              reduce using rule 17 (atom_expr -> STRING .)
+    EQ              reduce using rule 17 (atom_expr -> STRING .)
+    GE              reduce using rule 17 (atom_expr -> STRING .)
+    GT              reduce using rule 17 (atom_expr -> STRING .)
+    LE              reduce using rule 17 (atom_expr -> STRING .)
+    LT              reduce using rule 17 (atom_expr -> STRING .)
+    ;               reduce using rule 17 (atom_expr -> STRING .)
+    FLECHA          reduce using rule 17 (atom_expr -> STRING .)
+
+
+state 58
+
+    (18) atom_expr -> variable .
+    )               reduce using rule 18 (atom_expr -> variable .)
+    /               reduce using rule 18 (atom_expr -> variable .)
+    *               reduce using rule 18 (atom_expr -> variable .)
+    -               reduce using rule 18 (atom_expr -> variable .)
+    +               reduce using rule 18 (atom_expr -> variable .)
+    NE              reduce using rule 18 (atom_expr -> variable .)
+    EQ              reduce using rule 18 (atom_expr -> variable .)
+    GE              reduce using rule 18 (atom_expr -> variable .)
+    GT              reduce using rule 18 (atom_expr -> variable .)
+    LE              reduce using rule 18 (atom_expr -> variable .)
+    LT              reduce using rule 18 (atom_expr -> variable .)
+    ;               reduce using rule 18 (atom_expr -> variable .)
+    FLECHA          reduce using rule 18 (atom_expr -> variable .)
+
+
+state 59
+
+    (33) sentencia_ejecutable -> IF ( comparacion . ) bloque_sent_ejec opt_else ENDIF ;
+    )               shift and go to state 80
+
+
+state 60
+
+    (49) comparacion -> expr . NE expr
+    (50) comparacion -> expr . EQ expr
+    (51) comparacion -> expr . GE expr
+    (52) comparacion -> expr . GT expr
+    (53) comparacion -> expr . LE expr
+    (54) comparacion -> expr . LT expr
+    (11) atom_expr -> expr . / expr
+    (12) atom_expr -> expr . * expr
+    (13) atom_expr -> expr . - expr
+    (14) atom_expr -> expr . + expr
+    NE              shift and go to state 81
+    EQ              shift and go to state 82
+    GE              shift and go to state 83
+    GT              shift and go to state 84
+    LE              shift and go to state 85
+    LT              shift and go to state 86
+    /               shift and go to state 74
+    *               shift and go to state 75
+    -               shift and go to state 76
+    +               shift and go to state 77
+
+
+state 61
+
+    (34) sentencia_ejecutable -> variable ASIGNACION2 expr . ;
+    (11) atom_expr -> expr . / expr
+    (12) atom_expr -> expr . * expr
+    (13) atom_expr -> expr . - expr
+    (14) atom_expr -> expr . + expr
+    ;               shift and go to state 87
+    /               shift and go to state 74
+    *               shift and go to state 75
+    -               shift and go to state 76
+    +               shift and go to state 77
+
+
+state 62
+
+    (35) sentencia_ejecutable -> RETURN ( expr . ) ;
+    (11) atom_expr -> expr . / expr
+    (12) atom_expr -> expr . * expr
+    (13) atom_expr -> expr . - expr
+    (14) atom_expr -> expr . + expr
+    )               shift and go to state 88
+    /               shift and go to state 74
+    *               shift and go to state 75
+    -               shift and go to state 76
+    +               shift and go to state 77
+
+
+state 63
+
+    (29) sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec . ( argumento )
+    (               shift and go to state 89
+
+
+state 64
+
+    (21) sentencia_declarativa -> uint_id ( parametros_formales ) . { statements }
+    {               shift and go to state 90
+
+
+state 65
+
+    (25) parametros_formales -> parametros_formales , . parametro_formal
+    (27) parametro_formal -> . UINT variable
+    (28) parametro_formal -> . CVR UINT variable
+    UINT            shift and go to state 44
+    CVR             shift and go to state 45
+
+    parametro_formal               shift and go to state 91
+
+state 66
+
+    (27) parametro_formal -> UINT variable .
+    )               reduce using rule 27 (parametro_formal -> UINT variable .)
+    ,               reduce using rule 27 (parametro_formal -> UINT variable .)
+
+
+state 67
+
+    (28) parametro_formal -> CVR UINT . variable
+    (6) variable -> . ID opt_prefijo
+    ID              shift and go to state 4
+
+    variable                       shift and go to state 92
+
+state 68
+
+    (30) sentencia_ejecutable -> lista_variables ASIGNACION1 lista_elementos ; .
+    }               reduce using rule 30 (sentencia_ejecutable -> lista_variables ASIGNACION1 lista_elementos ; .)
+    (               reduce using rule 30 (sentencia_ejecutable -> lista_variables ASIGNACION1 lista_elementos ; .)
+    DO              reduce using rule 30 (sentencia_ejecutable -> lista_variables ASIGNACION1 lista_elementos ; .)
+    PRINT           reduce using rule 30 (sentencia_ejecutable -> lista_variables ASIGNACION1 lista_elementos ; .)
+    IF              reduce using rule 30 (sentencia_ejecutable -> lista_variables ASIGNACION1 lista_elementos ; .)
+    RETURN          reduce using rule 30 (sentencia_ejecutable -> lista_variables ASIGNACION1 lista_elementos ; .)
+    ID              reduce using rule 30 (sentencia_ejecutable -> lista_variables ASIGNACION1 lista_elementos ; .)
+    UINT            reduce using rule 30 (sentencia_ejecutable -> lista_variables ASIGNACION1 lista_elementos ; .)
+    WHILE           reduce using rule 30 (sentencia_ejecutable -> lista_variables ASIGNACION1 lista_elementos ; .)
+    ELSE            reduce using rule 30 (sentencia_ejecutable -> lista_variables ASIGNACION1 lista_elementos ; .)
+    ENDIF           reduce using rule 30 (sentencia_ejecutable -> lista_variables ASIGNACION1 lista_elementos ; .)
+
+
+state 69
+
+    (45) lista_elementos -> lista_elementos , . NUMERO
+    NUMERO          shift and go to state 93
+
+
+state 70
+
+    (31) sentencia_ejecutable -> DO bloque_sent_ejec WHILE ( . comparacion ) ;
+    (49) comparacion -> . expr NE expr
+    (50) comparacion -> . expr EQ expr
+    (51) comparacion -> . expr GE expr
+    (52) comparacion -> . expr GT expr
+    (53) comparacion -> . expr LE expr
+    (54) comparacion -> . expr LT expr
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    comparacion                    shift and go to state 94
+    expr                           shift and go to state 60
+    atom_expr                      shift and go to state 53
+    variable                       shift and go to state 58
+
+state 71
+
+    (41) bloque_sent_ejec -> { lista_sent_ejec } .
+    WHILE           reduce using rule 41 (bloque_sent_ejec -> { lista_sent_ejec } .)
+    (               reduce using rule 41 (bloque_sent_ejec -> { lista_sent_ejec } .)
+    ELSE            reduce using rule 41 (bloque_sent_ejec -> { lista_sent_ejec } .)
+    ENDIF           reduce using rule 41 (bloque_sent_ejec -> { lista_sent_ejec } .)
+
+
+state 72
+
+    (43) lista_sent_ejec -> lista_sent_ejec sentencia_ejecutable .
+    }               reduce using rule 43 (lista_sent_ejec -> lista_sent_ejec sentencia_ejecutable .)
+    (               reduce using rule 43 (lista_sent_ejec -> lista_sent_ejec sentencia_ejecutable .)
+    DO              reduce using rule 43 (lista_sent_ejec -> lista_sent_ejec sentencia_ejecutable .)
+    PRINT           reduce using rule 43 (lista_sent_ejec -> lista_sent_ejec sentencia_ejecutable .)
+    IF              reduce using rule 43 (lista_sent_ejec -> lista_sent_ejec sentencia_ejecutable .)
+    RETURN          reduce using rule 43 (lista_sent_ejec -> lista_sent_ejec sentencia_ejecutable .)
+    ID              reduce using rule 43 (lista_sent_ejec -> lista_sent_ejec sentencia_ejecutable .)
+
+
+state 73
+
+    (32) sentencia_ejecutable -> PRINT ( expr ) . ;
+    ;               shift and go to state 95
+
+
+state 74
+
+    (11) atom_expr -> expr / . expr
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    expr                           shift and go to state 96
+    atom_expr                      shift and go to state 53
+    variable                       shift and go to state 58
+
+state 75
+
+    (12) atom_expr -> expr * . expr
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    expr                           shift and go to state 97
+    atom_expr                      shift and go to state 53
+    variable                       shift and go to state 58
+
+state 76
+
+    (13) atom_expr -> expr - . expr
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    expr                           shift and go to state 98
+    atom_expr                      shift and go to state 53
+    variable                       shift and go to state 58
+
+state 77
+
+    (14) atom_expr -> expr + . expr
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    expr                           shift and go to state 99
+    atom_expr                      shift and go to state 53
+    variable                       shift and go to state 58
+
+state 78
+
+    (10) atom_expr -> - expr .
+    (11) atom_expr -> expr . / expr
+    (12) atom_expr -> expr . * expr
+    (13) atom_expr -> expr . - expr
+    (14) atom_expr -> expr . + expr
+    )               reduce using rule 10 (atom_expr -> - expr .)
+    /               reduce using rule 10 (atom_expr -> - expr .)
+    *               reduce using rule 10 (atom_expr -> - expr .)
+    -               reduce using rule 10 (atom_expr -> - expr .)
+    +               reduce using rule 10 (atom_expr -> - expr .)
+    NE              reduce using rule 10 (atom_expr -> - expr .)
+    EQ              reduce using rule 10 (atom_expr -> - expr .)
+    GE              reduce using rule 10 (atom_expr -> - expr .)
+    GT              reduce using rule 10 (atom_expr -> - expr .)
+    LE              reduce using rule 10 (atom_expr -> - expr .)
+    LT              reduce using rule 10 (atom_expr -> - expr .)
+    ;               reduce using rule 10 (atom_expr -> - expr .)
+    FLECHA          reduce using rule 10 (atom_expr -> - expr .)
+
+
+state 79
+
+    (15) atom_expr -> ID ( . parametros_reales )
+    (37) parametros_reales -> . parametros_reales , parametro_real
+    (38) parametros_reales -> . parametro_real
+    (36) parametro_real -> . expr FLECHA variable
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    parametros_reales              shift and go to state 100
+    parametro_real                 shift and go to state 101
+    expr                           shift and go to state 102
+    variable                       shift and go to state 58
+    atom_expr                      shift and go to state 53
+
+state 80
+
+    (33) sentencia_ejecutable -> IF ( comparacion ) . bloque_sent_ejec opt_else ENDIF ;
+    (41) bloque_sent_ejec -> . { lista_sent_ejec }
+    (42) bloque_sent_ejec -> . sentencia_ejecutable
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
+    (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
+    (32) sentencia_ejecutable -> . PRINT ( expr ) ;
+    (33) sentencia_ejecutable -> . IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ;
+    (34) sentencia_ejecutable -> . variable ASIGNACION2 expr ;
+    (35) sentencia_ejecutable -> . RETURN ( expr ) ;
+    (23) lista_variables -> . lista_variables , variable
+    (24) lista_variables -> . variable
+    (6) variable -> . ID opt_prefijo
+    {               shift and go to state 29
+    (               shift and go to state 9
+    DO              shift and go to state 12
+    PRINT           shift and go to state 13
+    IF              shift and go to state 14
+    RETURN          shift and go to state 16
+    ID              shift and go to state 4
+
+    bloque_sent_ejec               shift and go to state 103
+    sentencia_ejecutable           shift and go to state 30
+    lista_variables                shift and go to state 11
+    variable                       shift and go to state 15
+
+state 81
+
+    (49) comparacion -> expr NE . expr
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    expr                           shift and go to state 104
+    atom_expr                      shift and go to state 53
+    variable                       shift and go to state 58
+
+state 82
+
+    (50) comparacion -> expr EQ . expr
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    expr                           shift and go to state 105
+    atom_expr                      shift and go to state 53
+    variable                       shift and go to state 58
+
+state 83
+
+    (51) comparacion -> expr GE . expr
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    expr                           shift and go to state 106
+    atom_expr                      shift and go to state 53
+    variable                       shift and go to state 58
+
+state 84
+
+    (52) comparacion -> expr GT . expr
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    expr                           shift and go to state 107
+    atom_expr                      shift and go to state 53
+    variable                       shift and go to state 58
+
+state 85
+
+    (53) comparacion -> expr LE . expr
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    expr                           shift and go to state 108
+    atom_expr                      shift and go to state 53
+    variable                       shift and go to state 58
+
+state 86
+
+    (54) comparacion -> expr LT . expr
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    expr                           shift and go to state 109
+    atom_expr                      shift and go to state 53
+    variable                       shift and go to state 58
+
+state 87
+
+    (34) sentencia_ejecutable -> variable ASIGNACION2 expr ; .
+    }               reduce using rule 34 (sentencia_ejecutable -> variable ASIGNACION2 expr ; .)
+    (               reduce using rule 34 (sentencia_ejecutable -> variable ASIGNACION2 expr ; .)
+    DO              reduce using rule 34 (sentencia_ejecutable -> variable ASIGNACION2 expr ; .)
+    PRINT           reduce using rule 34 (sentencia_ejecutable -> variable ASIGNACION2 expr ; .)
+    IF              reduce using rule 34 (sentencia_ejecutable -> variable ASIGNACION2 expr ; .)
+    RETURN          reduce using rule 34 (sentencia_ejecutable -> variable ASIGNACION2 expr ; .)
+    ID              reduce using rule 34 (sentencia_ejecutable -> variable ASIGNACION2 expr ; .)
+    UINT            reduce using rule 34 (sentencia_ejecutable -> variable ASIGNACION2 expr ; .)
+    WHILE           reduce using rule 34 (sentencia_ejecutable -> variable ASIGNACION2 expr ; .)
+    ELSE            reduce using rule 34 (sentencia_ejecutable -> variable ASIGNACION2 expr ; .)
+    ENDIF           reduce using rule 34 (sentencia_ejecutable -> variable ASIGNACION2 expr ; .)
+
+
+state 88
+
+    (35) sentencia_ejecutable -> RETURN ( expr ) . ;
+    ;               shift and go to state 110
+
+
+state 89
+
+    (29) sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( . argumento )
+    (47) argumento -> . UINT
+    (48) argumento -> . variable
+    (6) variable -> . ID opt_prefijo
+    UINT            shift and go to state 112
+    ID              shift and go to state 4
+
+    argumento                      shift and go to state 111
+    variable                       shift and go to state 113
+
+state 90
+
+    (21) sentencia_declarativa -> uint_id ( parametros_formales ) { . statements }
+    (2) statements -> . statement
+    (3) statements -> . statements statement
+    (4) statement -> . sentencia_ejecutable
+    (5) statement -> . sentencia_declarativa
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
+    (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
+    (32) sentencia_ejecutable -> . PRINT ( expr ) ;
+    (33) sentencia_ejecutable -> . IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ;
+    (34) sentencia_ejecutable -> . variable ASIGNACION2 expr ;
+    (35) sentencia_ejecutable -> . RETURN ( expr ) ;
+    (21) sentencia_declarativa -> . uint_id ( parametros_formales ) { statements }
+    (22) sentencia_declarativa -> . uint_variables ;
+    (23) lista_variables -> . lista_variables , variable
+    (24) lista_variables -> . variable
+    (6) variable -> . ID opt_prefijo
+    (19) uint_id -> . UINT ID
+    (20) uint_variables -> . UINT lista_variables
+    (               shift and go to state 9
+    DO              shift and go to state 12
+    PRINT           shift and go to state 13
+    IF              shift and go to state 14
+    RETURN          shift and go to state 16
+    ID              shift and go to state 4
+    UINT            shift and go to state 18
+
+    uint_id                        shift and go to state 10
+    statements                     shift and go to state 114
+    statement                      shift and go to state 6
+    sentencia_ejecutable           shift and go to state 7
+    sentencia_declarativa          shift and go to state 8
+    lista_variables                shift and go to state 11
+    variable                       shift and go to state 15
+    uint_variables                 shift and go to state 17
+
+state 91
+
+    (25) parametros_formales -> parametros_formales , parametro_formal .
+    )               reduce using rule 25 (parametros_formales -> parametros_formales , parametro_formal .)
+    ,               reduce using rule 25 (parametros_formales -> parametros_formales , parametro_formal .)
+
+
+state 92
+
+    (28) parametro_formal -> CVR UINT variable .
+    )               reduce using rule 28 (parametro_formal -> CVR UINT variable .)
+    ,               reduce using rule 28 (parametro_formal -> CVR UINT variable .)
+
+
+state 93
+
+    (45) lista_elementos -> lista_elementos , NUMERO .
+    ;               reduce using rule 45 (lista_elementos -> lista_elementos , NUMERO .)
+    ,               reduce using rule 45 (lista_elementos -> lista_elementos , NUMERO .)
+
+
+state 94
+
+    (31) sentencia_ejecutable -> DO bloque_sent_ejec WHILE ( comparacion . ) ;
+    )               shift and go to state 115
+
+
+state 95
+
+    (32) sentencia_ejecutable -> PRINT ( expr ) ; .
+    }               reduce using rule 32 (sentencia_ejecutable -> PRINT ( expr ) ; .)
+    (               reduce using rule 32 (sentencia_ejecutable -> PRINT ( expr ) ; .)
+    DO              reduce using rule 32 (sentencia_ejecutable -> PRINT ( expr ) ; .)
+    PRINT           reduce using rule 32 (sentencia_ejecutable -> PRINT ( expr ) ; .)
+    IF              reduce using rule 32 (sentencia_ejecutable -> PRINT ( expr ) ; .)
+    RETURN          reduce using rule 32 (sentencia_ejecutable -> PRINT ( expr ) ; .)
+    ID              reduce using rule 32 (sentencia_ejecutable -> PRINT ( expr ) ; .)
+    UINT            reduce using rule 32 (sentencia_ejecutable -> PRINT ( expr ) ; .)
+    WHILE           reduce using rule 32 (sentencia_ejecutable -> PRINT ( expr ) ; .)
+    ELSE            reduce using rule 32 (sentencia_ejecutable -> PRINT ( expr ) ; .)
+    ENDIF           reduce using rule 32 (sentencia_ejecutable -> PRINT ( expr ) ; .)
+
+
+state 96
+
+    (11) atom_expr -> expr / expr .
+    (11) atom_expr -> expr . / expr
+    (12) atom_expr -> expr . * expr
+    (13) atom_expr -> expr . - expr
+    (14) atom_expr -> expr . + expr
+    )               reduce using rule 11 (atom_expr -> expr / expr .)
+    /               reduce using rule 11 (atom_expr -> expr / expr .)
+    *               reduce using rule 11 (atom_expr -> expr / expr .)
+    -               reduce using rule 11 (atom_expr -> expr / expr .)
+    +               reduce using rule 11 (atom_expr -> expr / expr .)
+    NE              reduce using rule 11 (atom_expr -> expr / expr .)
+    EQ              reduce using rule 11 (atom_expr -> expr / expr .)
+    GE              reduce using rule 11 (atom_expr -> expr / expr .)
+    GT              reduce using rule 11 (atom_expr -> expr / expr .)
+    LE              reduce using rule 11 (atom_expr -> expr / expr .)
+    LT              reduce using rule 11 (atom_expr -> expr / expr .)
+    ;               reduce using rule 11 (atom_expr -> expr / expr .)
+    FLECHA          reduce using rule 11 (atom_expr -> expr / expr .)
+
+
+state 97
+
+    (12) atom_expr -> expr * expr .
+    (11) atom_expr -> expr . / expr
+    (12) atom_expr -> expr . * expr
+    (13) atom_expr -> expr . - expr
+    (14) atom_expr -> expr . + expr
+    )               reduce using rule 12 (atom_expr -> expr * expr .)
+    /               reduce using rule 12 (atom_expr -> expr * expr .)
+    *               reduce using rule 12 (atom_expr -> expr * expr .)
+    -               reduce using rule 12 (atom_expr -> expr * expr .)
+    +               reduce using rule 12 (atom_expr -> expr * expr .)
+    NE              reduce using rule 12 (atom_expr -> expr * expr .)
+    EQ              reduce using rule 12 (atom_expr -> expr * expr .)
+    GE              reduce using rule 12 (atom_expr -> expr * expr .)
+    GT              reduce using rule 12 (atom_expr -> expr * expr .)
+    LE              reduce using rule 12 (atom_expr -> expr * expr .)
+    LT              reduce using rule 12 (atom_expr -> expr * expr .)
+    ;               reduce using rule 12 (atom_expr -> expr * expr .)
+    FLECHA          reduce using rule 12 (atom_expr -> expr * expr .)
+
+
+state 98
+
+    (13) atom_expr -> expr - expr .
+    (11) atom_expr -> expr . / expr
+    (12) atom_expr -> expr . * expr
+    (13) atom_expr -> expr . - expr
+    (14) atom_expr -> expr . + expr
+    )               reduce using rule 13 (atom_expr -> expr - expr .)
+    -               reduce using rule 13 (atom_expr -> expr - expr .)
+    +               reduce using rule 13 (atom_expr -> expr - expr .)
+    NE              reduce using rule 13 (atom_expr -> expr - expr .)
+    EQ              reduce using rule 13 (atom_expr -> expr - expr .)
+    GE              reduce using rule 13 (atom_expr -> expr - expr .)
+    GT              reduce using rule 13 (atom_expr -> expr - expr .)
+    LE              reduce using rule 13 (atom_expr -> expr - expr .)
+    LT              reduce using rule 13 (atom_expr -> expr - expr .)
+    ;               reduce using rule 13 (atom_expr -> expr - expr .)
+    FLECHA          reduce using rule 13 (atom_expr -> expr - expr .)
+    /               shift and go to state 74
+    *               shift and go to state 75
+
+
+state 99
+
+    (14) atom_expr -> expr + expr .
+    (11) atom_expr -> expr . / expr
+    (12) atom_expr -> expr . * expr
+    (13) atom_expr -> expr . - expr
+    (14) atom_expr -> expr . + expr
+    )               reduce using rule 14 (atom_expr -> expr + expr .)
+    -               reduce using rule 14 (atom_expr -> expr + expr .)
+    +               reduce using rule 14 (atom_expr -> expr + expr .)
+    NE              reduce using rule 14 (atom_expr -> expr + expr .)
+    EQ              reduce using rule 14 (atom_expr -> expr + expr .)
+    GE              reduce using rule 14 (atom_expr -> expr + expr .)
+    GT              reduce using rule 14 (atom_expr -> expr + expr .)
+    LE              reduce using rule 14 (atom_expr -> expr + expr .)
+    LT              reduce using rule 14 (atom_expr -> expr + expr .)
+    ;               reduce using rule 14 (atom_expr -> expr + expr .)
+    FLECHA          reduce using rule 14 (atom_expr -> expr + expr .)
+    /               shift and go to state 74
+    *               shift and go to state 75
+
+
+state 100
+
+    (15) atom_expr -> ID ( parametros_reales . )
+    (37) parametros_reales -> parametros_reales . , parametro_real
+    )               shift and go to state 116
+    ,               shift and go to state 117
+
+
+state 101
+
+    (38) parametros_reales -> parametro_real .
+    )               reduce using rule 38 (parametros_reales -> parametro_real .)
+    ,               reduce using rule 38 (parametros_reales -> parametro_real .)
+
+
+state 102
+
+    (36) parametro_real -> expr . FLECHA variable
+    (11) atom_expr -> expr . / expr
+    (12) atom_expr -> expr . * expr
+    (13) atom_expr -> expr . - expr
+    (14) atom_expr -> expr . + expr
+    FLECHA          shift and go to state 118
+    /               shift and go to state 74
+    *               shift and go to state 75
+    -               shift and go to state 76
+    +               shift and go to state 77
+
+
+state 103
+
+    (33) sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec . opt_else ENDIF ;
+    (39) opt_else -> .
+    (40) opt_else -> . ELSE bloque_sent_ejec
+    ENDIF           reduce using rule 39 (opt_else -> .)
+    ELSE            shift and go to state 120
+
+    opt_else                       shift and go to state 119
+
+state 104
+
+    (49) comparacion -> expr NE expr .
+    (11) atom_expr -> expr . / expr
+    (12) atom_expr -> expr . * expr
+    (13) atom_expr -> expr . - expr
+    (14) atom_expr -> expr . + expr
+    )               reduce using rule 49 (comparacion -> expr NE expr .)
+    /               shift and go to state 74
+    *               shift and go to state 75
+    -               shift and go to state 76
+    +               shift and go to state 77
+
+
+state 105
+
+    (50) comparacion -> expr EQ expr .
+    (11) atom_expr -> expr . / expr
+    (12) atom_expr -> expr . * expr
+    (13) atom_expr -> expr . - expr
+    (14) atom_expr -> expr . + expr
+    )               reduce using rule 50 (comparacion -> expr EQ expr .)
+    /               shift and go to state 74
+    *               shift and go to state 75
+    -               shift and go to state 76
+    +               shift and go to state 77
+
+
+state 106
+
+    (51) comparacion -> expr GE expr .
+    (11) atom_expr -> expr . / expr
+    (12) atom_expr -> expr . * expr
+    (13) atom_expr -> expr . - expr
+    (14) atom_expr -> expr . + expr
+    )               reduce using rule 51 (comparacion -> expr GE expr .)
+    /               shift and go to state 74
+    *               shift and go to state 75
+    -               shift and go to state 76
+    +               shift and go to state 77
+
+
+state 107
+
+    (52) comparacion -> expr GT expr .
+    (11) atom_expr -> expr . / expr
+    (12) atom_expr -> expr . * expr
+    (13) atom_expr -> expr . - expr
+    (14) atom_expr -> expr . + expr
+    )               reduce using rule 52 (comparacion -> expr GT expr .)
+    /               shift and go to state 74
+    *               shift and go to state 75
+    -               shift and go to state 76
+    +               shift and go to state 77
+
+
+state 108
+
+    (53) comparacion -> expr LE expr .
+    (11) atom_expr -> expr . / expr
+    (12) atom_expr -> expr . * expr
+    (13) atom_expr -> expr . - expr
+    (14) atom_expr -> expr . + expr
+    )               reduce using rule 53 (comparacion -> expr LE expr .)
+    /               shift and go to state 74
+    *               shift and go to state 75
+    -               shift and go to state 76
+    +               shift and go to state 77
+
+
+state 109
+
+    (54) comparacion -> expr LT expr .
+    (11) atom_expr -> expr . / expr
+    (12) atom_expr -> expr . * expr
+    (13) atom_expr -> expr . - expr
+    (14) atom_expr -> expr . + expr
+    )               reduce using rule 54 (comparacion -> expr LT expr .)
+    /               shift and go to state 74
+    *               shift and go to state 75
+    -               shift and go to state 76
+    +               shift and go to state 77
+
+
+state 110
+
+    (35) sentencia_ejecutable -> RETURN ( expr ) ; .
+    }               reduce using rule 35 (sentencia_ejecutable -> RETURN ( expr ) ; .)
+    (               reduce using rule 35 (sentencia_ejecutable -> RETURN ( expr ) ; .)
+    DO              reduce using rule 35 (sentencia_ejecutable -> RETURN ( expr ) ; .)
+    PRINT           reduce using rule 35 (sentencia_ejecutable -> RETURN ( expr ) ; .)
+    IF              reduce using rule 35 (sentencia_ejecutable -> RETURN ( expr ) ; .)
+    RETURN          reduce using rule 35 (sentencia_ejecutable -> RETURN ( expr ) ; .)
+    ID              reduce using rule 35 (sentencia_ejecutable -> RETURN ( expr ) ; .)
+    UINT            reduce using rule 35 (sentencia_ejecutable -> RETURN ( expr ) ; .)
+    WHILE           reduce using rule 35 (sentencia_ejecutable -> RETURN ( expr ) ; .)
+    ELSE            reduce using rule 35 (sentencia_ejecutable -> RETURN ( expr ) ; .)
+    ENDIF           reduce using rule 35 (sentencia_ejecutable -> RETURN ( expr ) ; .)
+
+
+state 111
+
+    (29) sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento . )
+    )               shift and go to state 121
+
+
+state 112
+
+    (47) argumento -> UINT .
+    )               reduce using rule 47 (argumento -> UINT .)
+
+
+state 113
+
+    (48) argumento -> variable .
+    )               reduce using rule 48 (argumento -> variable .)
+
+
+state 114
+
+    (21) sentencia_declarativa -> uint_id ( parametros_formales ) { statements . }
+    (3) statements -> statements . statement
+    (4) statement -> . sentencia_ejecutable
+    (5) statement -> . sentencia_declarativa
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
+    (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
+    (32) sentencia_ejecutable -> . PRINT ( expr ) ;
+    (33) sentencia_ejecutable -> . IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ;
+    (34) sentencia_ejecutable -> . variable ASIGNACION2 expr ;
+    (35) sentencia_ejecutable -> . RETURN ( expr ) ;
+    (21) sentencia_declarativa -> . uint_id ( parametros_formales ) { statements }
+    (22) sentencia_declarativa -> . uint_variables ;
+    (23) lista_variables -> . lista_variables , variable
+    (24) lista_variables -> . variable
+    (6) variable -> . ID opt_prefijo
+    (19) uint_id -> . UINT ID
+    (20) uint_variables -> . UINT lista_variables
+    }               shift and go to state 122
+    (               shift and go to state 9
+    DO              shift and go to state 12
+    PRINT           shift and go to state 13
+    IF              shift and go to state 14
+    RETURN          shift and go to state 16
+    ID              shift and go to state 4
+    UINT            shift and go to state 18
+
+    uint_id                        shift and go to state 10
+    statement                      shift and go to state 22
+    sentencia_ejecutable           shift and go to state 7
+    sentencia_declarativa          shift and go to state 8
+    lista_variables                shift and go to state 11
+    variable                       shift and go to state 15
+    uint_variables                 shift and go to state 17
+
+state 115
+
+    (31) sentencia_ejecutable -> DO bloque_sent_ejec WHILE ( comparacion ) . ;
+    ;               shift and go to state 123
+
+
+state 116
+
+    (15) atom_expr -> ID ( parametros_reales ) .
+    )               reduce using rule 15 (atom_expr -> ID ( parametros_reales ) .)
+    /               reduce using rule 15 (atom_expr -> ID ( parametros_reales ) .)
+    *               reduce using rule 15 (atom_expr -> ID ( parametros_reales ) .)
+    -               reduce using rule 15 (atom_expr -> ID ( parametros_reales ) .)
+    +               reduce using rule 15 (atom_expr -> ID ( parametros_reales ) .)
+    NE              reduce using rule 15 (atom_expr -> ID ( parametros_reales ) .)
+    EQ              reduce using rule 15 (atom_expr -> ID ( parametros_reales ) .)
+    GE              reduce using rule 15 (atom_expr -> ID ( parametros_reales ) .)
+    GT              reduce using rule 15 (atom_expr -> ID ( parametros_reales ) .)
+    LE              reduce using rule 15 (atom_expr -> ID ( parametros_reales ) .)
+    LT              reduce using rule 15 (atom_expr -> ID ( parametros_reales ) .)
+    ;               reduce using rule 15 (atom_expr -> ID ( parametros_reales ) .)
+    FLECHA          reduce using rule 15 (atom_expr -> ID ( parametros_reales ) .)
+
+
+state 117
+
+    (37) parametros_reales -> parametros_reales , . parametro_real
+    (36) parametro_real -> . expr FLECHA variable
+    (9) expr -> . atom_expr
+    (10) atom_expr -> . - expr
+    (11) atom_expr -> . expr / expr
+    (12) atom_expr -> . expr * expr
+    (13) atom_expr -> . expr - expr
+    (14) atom_expr -> . expr + expr
+    (15) atom_expr -> . ID ( parametros_reales )
+    (16) atom_expr -> . NUMERO
+    (17) atom_expr -> . STRING
+    (18) atom_expr -> . variable
+    (6) variable -> . ID opt_prefijo
+    -               shift and go to state 54
+    ID              shift and go to state 55
+    NUMERO          shift and go to state 56
+    STRING          shift and go to state 57
+
+    parametro_real                 shift and go to state 124
+    expr                           shift and go to state 102
+    variable                       shift and go to state 58
+    atom_expr                      shift and go to state 53
+
+state 118
+
+    (36) parametro_real -> expr FLECHA . variable
+    (6) variable -> . ID opt_prefijo
+    ID              shift and go to state 4
+
+    variable                       shift and go to state 125
+
+state 119
+
+    (33) sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else . ENDIF ;
+    ENDIF           shift and go to state 126
+
+
+state 120
+
+    (40) opt_else -> ELSE . bloque_sent_ejec
+    (41) bloque_sent_ejec -> . { lista_sent_ejec }
+    (42) bloque_sent_ejec -> . sentencia_ejecutable
+    (29) sentencia_ejecutable -> . ( uint_id ) bloque_sent_ejec ( argumento )
+    (30) sentencia_ejecutable -> . lista_variables ASIGNACION1 lista_elementos ;
+    (31) sentencia_ejecutable -> . DO bloque_sent_ejec WHILE ( comparacion ) ;
+    (32) sentencia_ejecutable -> . PRINT ( expr ) ;
+    (33) sentencia_ejecutable -> . IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ;
+    (34) sentencia_ejecutable -> . variable ASIGNACION2 expr ;
+    (35) sentencia_ejecutable -> . RETURN ( expr ) ;
+    (23) lista_variables -> . lista_variables , variable
+    (24) lista_variables -> . variable
+    (6) variable -> . ID opt_prefijo
+    {               shift and go to state 29
+    (               shift and go to state 9
+    DO              shift and go to state 12
+    PRINT           shift and go to state 13
+    IF              shift and go to state 14
+    RETURN          shift and go to state 16
+    ID              shift and go to state 4
+
+    bloque_sent_ejec               shift and go to state 127
+    sentencia_ejecutable           shift and go to state 30
+    lista_variables                shift and go to state 11
+    variable                       shift and go to state 15
+
+state 121
+
+    (29) sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .
+    }               reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
+    (               reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
+    DO              reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
+    PRINT           reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
+    IF              reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
+    RETURN          reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
+    ID              reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
+    UINT            reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
+    WHILE           reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
+    ELSE            reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
+    ENDIF           reduce using rule 29 (sentencia_ejecutable -> ( uint_id ) bloque_sent_ejec ( argumento ) .)
+
+
+state 122
+
+    (21) sentencia_declarativa -> uint_id ( parametros_formales ) { statements } .
+    }               reduce using rule 21 (sentencia_declarativa -> uint_id ( parametros_formales ) { statements } .)
+    (               reduce using rule 21 (sentencia_declarativa -> uint_id ( parametros_formales ) { statements } .)
+    DO              reduce using rule 21 (sentencia_declarativa -> uint_id ( parametros_formales ) { statements } .)
+    PRINT           reduce using rule 21 (sentencia_declarativa -> uint_id ( parametros_formales ) { statements } .)
+    IF              reduce using rule 21 (sentencia_declarativa -> uint_id ( parametros_formales ) { statements } .)
+    RETURN          reduce using rule 21 (sentencia_declarativa -> uint_id ( parametros_formales ) { statements } .)
+    ID              reduce using rule 21 (sentencia_declarativa -> uint_id ( parametros_formales ) { statements } .)
+    UINT            reduce using rule 21 (sentencia_declarativa -> uint_id ( parametros_formales ) { statements } .)
+
+
+state 123
+
+    (31) sentencia_ejecutable -> DO bloque_sent_ejec WHILE ( comparacion ) ; .
+    }               reduce using rule 31 (sentencia_ejecutable -> DO bloque_sent_ejec WHILE ( comparacion ) ; .)
+    (               reduce using rule 31 (sentencia_ejecutable -> DO bloque_sent_ejec WHILE ( comparacion ) ; .)
+    DO              reduce using rule 31 (sentencia_ejecutable -> DO bloque_sent_ejec WHILE ( comparacion ) ; .)
+    PRINT           reduce using rule 31 (sentencia_ejecutable -> DO bloque_sent_ejec WHILE ( comparacion ) ; .)
+    IF              reduce using rule 31 (sentencia_ejecutable -> DO bloque_sent_ejec WHILE ( comparacion ) ; .)
+    RETURN          reduce using rule 31 (sentencia_ejecutable -> DO bloque_sent_ejec WHILE ( comparacion ) ; .)
+    ID              reduce using rule 31 (sentencia_ejecutable -> DO bloque_sent_ejec WHILE ( comparacion ) ; .)
+    UINT            reduce using rule 31 (sentencia_ejecutable -> DO bloque_sent_ejec WHILE ( comparacion ) ; .)
+    WHILE           reduce using rule 31 (sentencia_ejecutable -> DO bloque_sent_ejec WHILE ( comparacion ) ; .)
+    ELSE            reduce using rule 31 (sentencia_ejecutable -> DO bloque_sent_ejec WHILE ( comparacion ) ; .)
+    ENDIF           reduce using rule 31 (sentencia_ejecutable -> DO bloque_sent_ejec WHILE ( comparacion ) ; .)
+
+
+state 124
+
+    (37) parametros_reales -> parametros_reales , parametro_real .
+    )               reduce using rule 37 (parametros_reales -> parametros_reales , parametro_real .)
+    ,               reduce using rule 37 (parametros_reales -> parametros_reales , parametro_real .)
+
+
+state 125
+
+    (36) parametro_real -> expr FLECHA variable .
+    )               reduce using rule 36 (parametro_real -> expr FLECHA variable .)
+    ,               reduce using rule 36 (parametro_real -> expr FLECHA variable .)
+
+
+state 126
+
+    (33) sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else ENDIF . ;
+    ;               shift and go to state 128
+
+
+state 127
+
+    (40) opt_else -> ELSE bloque_sent_ejec .
+    ENDIF           reduce using rule 40 (opt_else -> ELSE bloque_sent_ejec .)
+
+
+state 128
+
+    (33) sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ; .
+    }               reduce using rule 33 (sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ; .)
+    (               reduce using rule 33 (sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ; .)
+    DO              reduce using rule 33 (sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ; .)
+    PRINT           reduce using rule 33 (sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ; .)
+    IF              reduce using rule 33 (sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ; .)
+    RETURN          reduce using rule 33 (sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ; .)
+    ID              reduce using rule 33 (sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ; .)
+    UINT            reduce using rule 33 (sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ; .)
+    WHILE           reduce using rule 33 (sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ; .)
+    ELSE            reduce using rule 33 (sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ; .)
+    ENDIF           reduce using rule 33 (sentencia_ejecutable -> IF ( comparacion ) bloque_sent_ejec opt_else ENDIF ; .)

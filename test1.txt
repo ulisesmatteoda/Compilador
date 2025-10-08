@@ -1,0 +1,36 @@
+TEST1 {
+    uint A, B, C, D;
+    A := 10UI;
+    C, D = 1UI, 2UI; ## Asignaciones multiples ##
+    A, B = 7UI, 8UI, 9UI; ## Asignaciones multiples con menos elementos a la izquierda ##
+
+    uint F(uint X) { ## Declaracion de funciones ##
+        Y := X;
+        return (Y); ## return ##
+    }
+
+    A := F(A -> X);        ## llamada con parámetro real etiquetado ##
+
+    if (A > 2UI) ## if ##
+        print(A); ## print variable ##
+        ## print("Hola soy el print");  print texto ## 
+    endif;
+
+    if (A > 2UI) { ## if con else ##
+        print(A); ## print variable ##
+        print("Hola soy el print"); ## print texto ## 
+    } 
+    else 
+        uint E.J := P; ## bloque ejecutable con una sentencia sin corchetes, y uso de prefijado ##
+    endif;
+
+    do { ## do while ##
+        A := A - 1UI;
+    } while (A > 0UI);
+
+    ## lambda en línea como sentencia (un parámetro) ##
+    (uint Z) { print(Z); } (10UI);
+
+
+}
+
