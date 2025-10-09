@@ -32,8 +32,8 @@ class Sintactico(Parser):
     def statement(self, p):
         return p.sentencia_ejecutable
 
-    #Prefijado Obligatorio
-    @_('ID opt_prefijo')
+    #Simbolos terminales: van a ->expr o ->statement
+    @_('ID opt_prefijo') #Prefijado Obligatorio
     def variable(self,p):
         return (p.ID, p.opt_prefijo)
 
@@ -61,12 +61,12 @@ class Sintactico(Parser):
     def atom_expr(self, p):
         return int(p.NUMERO) #convierte el string a entero
     
-
+    #Agrupacion de <tipo> <variable>
     @_('UINT ID')
-    def uint_id(self, p):#cabezera de declaracion, se usa en declaraciones de funciones, y expresiones lambda. Asi se evitan shitf-reduce
+    def uint_id(self, p): #cabezera de declaracion, se usa en declaraciones de funciones, y expresiones lambda. Asi se evitan shitf-reduce
         return (p.UINT, p.ID)
 
-    @_('UINT lista_variables') 
+    @_('UINT lista_variables') #se usa en declaracion simple, lista de variables separadas por ","
     def uint_variables(self, p): #mantenerlo de uint_id en reglas disjuntas,sino hay conflicto
         return (p.UINT, p.lista_variables) 
 
@@ -80,13 +80,13 @@ class Sintactico(Parser):
     def lista_variables(self, p):
         return [p.variable]
 
-    @_('lista_variables "," variable') #La lista de variables será una lista de identificadores separados con coma ( “,” ) 
+    @_('lista_variables "," variable') 
     def lista_variables(self, p):
         return p.lista_variables + [p.variable]
     
 
     #Declaracion de funciones 
-    @_('uint_id "(" parametros_formales ")" "{" statements "}"')
+    @_('uint_id "(" parametros_formales ")" "{" statements "}" ";" ')
     def sentencia_declarativa(self, p):
         return ('decl_func', p.uint_id, p.parametros_formales, p.statements)
 
@@ -115,6 +115,22 @@ class Sintactico(Parser):
     @_('variable ASIGNACION2 expr ";"') # vamos a usar ASIGNACION1 para asignaciones multiples, y ASIGNACION2 para asignaciones normales
     def sentencia_ejecutable(self, p):
         return ('ejec_asign', p.variable, p.ASIGNACION2, p.expr)
+    
+    #Asignaciones multiples
+    @_('lista_variables ASIGNACION1 lista_elementos ";"')
+    def sentencia_ejecutable(self, p):
+        if len(p.lista_elementos) < len(p.lista_variables): #chequeo semantico
+            raise Exception(f"Error semántico: se esperan al menos      {len(p.lista_variables)} valores, "
+                            f"pero solo hay {len(p.lista_elementos)}")
+        return ('ejec_asign_mult', p.lista_variables, p.ASIGNACION1, p.lista_elementos)
+
+    @_('NUMERO') #las expresiones del lado derecho solo pueden ser constantes
+    def lista_elementos(self, p):
+        return [int(p.NUMERO)]
+
+    @_('lista_elementos "," NUMERO')
+    def lista_elementos(self, p):
+        return p.lista_elementos + [int(p.NUMERO)]
 
     
     #Invocacion a funcion
@@ -165,33 +181,16 @@ class Sintactico(Parser):
         return p.lista_sent_ejec
 
 
-    #Sentencia Print    
-    @_('PRINT "(" expr ")" ";"')
-    def sentencia_ejecutable(self, p):
-        return ('ejec_print', p.expr)
-    
-
     #Sentencia do while
     @_('DO bloque_sent_ejec WHILE "(" comparacion ")" ";"')
     def sentencia_ejecutable(self, p):
         return ('ejec_while', p.DO, p.bloque_sent_ejec, p.WHILE, p.comparacion)
     
 
-    #Asignaciones multiples
-    @_('lista_variables ASIGNACION1 lista_elementos ";"')
+    #Sentencia Print    
+    @_('PRINT "(" expr ")" ";"')
     def sentencia_ejecutable(self, p):
-        if len(p.lista_elementos) < len(p.lista_variables): #chequeo semantico
-            raise Exception(f"Error semántico: se esperan al menos      {len(p.lista_variables)} valores, "
-                            f"pero solo hay {len(p.lista_elementos)}")
-        return ('ejec_asign_mult', p.lista_variables, p.ASIGNACION1, p.lista_elementos)
-
-    @_('NUMERO') #las expresiones del lado derecho solo pueden ser constantes
-    def lista_elementos(self, p):
-        return [int(p.NUMERO)]
-
-    @_('lista_elementos "," NUMERO')
-    def lista_elementos(self, p):
-        return p.lista_elementos + [int(p.NUMERO)]
+        return ('ejec_print', p.expr)
 
 
     #Expresiones lambda: En linea
@@ -260,12 +259,216 @@ class Sintactico(Parser):
         return ('ne', p.expr0, p.expr1)
     
     
-     #Ejemplo error personalizado
-#    @_('ID ":=" error ";"')
-#    def sentencia_ejecutable(self, p):
-#        print(f"[Error de asignación] Línea {p.lineno}: "
-#            f"expresión inválida en el lado derecho de ':='")
-#        return ('error_assign',)
+    # ERRORES PERSONALIZADOS
+    #falta nombre del programa o corchetes
+    @_('error "{" statements "}" ')
+    def program(self, p):
+        print(f"Error linea: {p.lineno}: falta el nombre del programa")
+        return ('error',)
+    
+    @_('ID statements "}"')
+    def program(self, p):
+        print(f"Error linea: {p.lineno}: falta el primer corchete del bloque")
+        return ('error',)
+    
+    @_('ID statements "}"')
+    def program(self, p):
+        print(f"Error linea: {p.lineno}: falta el segundo corchete del bloque")
+        return ('error',)
+    
+    #falta ";"
+    @_('uint_variables error ') #declaracion de variable
+    def sentencia_declarativa(self, p):
+        print(f"Error linea: {p.lineno}: falta el ';' al final de la sentencia")
+        return ('error',)
+    
+    @_('uint_id "(" parametros_formales ")" "{" statements "}" error ')
+    def sentencia_declarativa(self, p): #declaracion de funciones
+        print(f"Error linea: {p.lineno}: falta el ';' al final de la sentencia")
+        return ('error',)
+  
+    @_('variable ASIGNACION2 expr error')
+    def sentencia_ejecutable(self, p): #asignaciones simples
+        print(f"Error linea: {p.lineno}: falta el ';' al final de la sentencia")
+        return ('error',)
+    
+    @_('lista_variables ASIGNACION1 lista_elementos error')
+    def sentencia_ejecutable(self, p): #asignaciones multiples
+        print(f"Error linea: {p.lineno}: falta el ';' al final de la sentencia")
+        return ('error',)
+
+    @_('IF "(" comparacion ")" bloque_sent_ejec opt_else ENDIF error') 
+    def sentencia_ejecutable(self, p): #if
+        print(f"Error linea: {p.lineno}: falta el ';' al final de la sentencia")
+        return ('error',)
+    
+    @_('DO bloque_sent_ejec WHILE "(" comparacion ")" error')
+    def sentencia_ejecutable(self, p): #do while
+        print(f"Error linea: {p.lineno}: falta el ';' al final de la sentencia")
+        return ('error',)
+
+    @_('PRINT "(" expr ")" error')
+    def sentencia_ejecutable(self, p): #print
+        print(f"Error linea: {p.lineno}: falta el ';' al final de la sentencia")
+        return ('error',)
+    
+    @_('error "(" parametros_formales ")" "{" statements "}" ";" ')
+    def sentencia_declarativa(self, p):
+        print(f"Error linea: {p.lineno}: falta el nombre de la funcion")
+        return ('error',)
+    
+    @_('lista_variables error variable')
+    def lista_variables(self, p):
+        print(f"Error linea: {p.lineno}: falta ',' antes de {p.variable}") #en declaracion de variables, tambien sirve para asignaciones multiples del lado izquierdo
+        return ('error',)
+    
+    #falta el nombre de parametro formal en declaracion de funcion
+    @_('CVR UINT error') 
+    def parametro_formal(self, p): 
+        print(f"Error linea: {p.lineno}: falta el nombre del parametro formal") 
+        return ('error',)
+
+    @_('UINT error') 
+    def parametro_formal(self, p):
+        print(f"Error linea: {p.lineno}: falta el nombre del parametro formal") 
+        return ('error',)
+    
+    #falta de tipo en parametro formal en declaracion de funcion
+    @_('CVR error variable') 
+    def parametro_formal(self, p): 
+        print(f"Error linea: {p.lineno}: falta el tipo del parametro formal") 
+        return ('error',)
+
+    @_('error variable') 
+    def parametro_formal(self, p):
+        print(f"Error linea: {p.lineno}: falta el tipo del parametro formal") 
+        return ('error',)
+    
+    #falta de parametro formal al que corresponde el parametro real
+    @_('expr FLECHA error')
+    def parametro_real(self, p):
+        print(f"Error linea: {p.lineno}: falta el parametro formal al que apunta {p.expr}") 
+        return ('error',)
+    
+    #falta argumento en sentencia print
+    @_('PRINT "(" error ")" ";"')
+    def sentencia_ejecutable(self, p):
+        print(f"Error linea: {p.lineno}: falta el argumento a imprimir") 
+        return ('error',)
+    
+    #falta parentesis de apertura o cierre en if o do while
+    @_('error lista_sent_ejec "}"')
+    def bloque_sent_ejec(self, p):
+        print(f"Error linea: {p.lineno}: falta el parentesis de apertura") 
+        return ('error',)
+
+    @_('"{" lista_sent_ejec error')
+    def bloque_sent_ejec(self, p):
+        print(f"Error linea: {p.lineno}: falta el parentesis de cierre") 
+        return ('error',)
+
+    #falta cuerpo en iteraciones
+    @_('DO error WHILE "(" comparacion ")" ";"')
+    def sentencia_ejecutable(self, p):    
+        print(f"Error linea: {p.lineno}: falta el cuerpo del 'do'") 
+        return ('error',)
+    
+    #falta de endif
+    @_('IF "(" comparacion ")" bloque_sent_ejec opt_else error ";"')
+    def sentencia_ejecutable(self, p):
+        print(f"Error linea: {p.lineno}: falta el endif'") 
+        return ('error',)
+
+    #Falta de contenido en bloque then-else
+    @_('IF "(" comparacion ")" error opt_else ENDIF ";"') 
+    def sentencia_ejecutable(self, p):
+        print(f"Error linea: {p.lineno}: falta el bloque del 'if''") 
+        return ('error',)
+
+    @_('ELSE error')
+    def opt_else(self, p):
+        print(f"Error linea: {p.lineno}: falta el bloque del 'else''") 
+        return ('error',)
+    
+    #falta de operando en expresion
+    @_('error "+" expr')
+    def atom_expr(self, p):
+        print(f"Error linea: {p.lineno}: falta el operando de la suma con {p.expr}") 
+        return ('error',)
+
+    @_('expr "+" error')
+    def atom_expr(self, p):
+        print(f"Error linea: {p.lineno}: falta el operando de la suma con {p.expr}") 
+        return ('error',)
+
+
+    @_('error "-" expr')
+    def atom_expr(self, p):
+        print(f"Error linea: {p.lineno}: falta el operando de la resta con {p.expr}") 
+        return ('error',)
+    
+    @_('expr "-" error')
+    def atom_expr(self, p):
+        print(f"Error linea: {p.lineno}: falta el operando de la resta con {p.expr}") 
+        return ('error',)
+
+    @_('error "*" expr')
+    def atom_expr(self, p):
+        print(f"Error linea: {p.lineno}: falta el operando de la multiplicacion con {p.expr}") 
+        return ('error',)
+    
+    @_('expr "*" error')
+    def atom_expr(self, p):
+        print(f"Error linea: {p.lineno}: falta el operando de la multiplicacion con {p.expr}") 
+        return ('error',)
+
+    @_('error "/" expr')
+    def atom_expr(self, p):
+        print(f"Error linea: {p.lineno}: falta el operando de la division con {p.expr}") 
+        return ('error',)
+    
+    @_('expr "/" error')
+    def atom_expr(self, p):
+        print(f"Error linea: {p.lineno}: falta el operando de la division con {p.expr}") 
+        return ('error',)
+
+    #falta de operador en expresion
+    @_('expr error expr')
+    def atom_expr(self, p):
+        print(f"Error linea: {p.lineno}: falta de operando en expresion") 
+        return ('error',)
+    
+    #falta de comparador en comparacion
+    @_('expr error expr')
+    def comparacion(self, p):
+        print(f"Error linea: {p.lineno}: falta de comparador en comparacion") 
+        return ('error',)
+    
+    #falta while
+    @_('DO bloque_sent_ejec error "(" comparacion ")" ";"')
+    def sentencia_ejecutable(self, p):
+        print(f"Error linea: {p.lineno}: falta while antes de la comparacion") 
+        return ('error',)
+
+    #falta de “,” en lista de elementos del lado izquierdo o del lado derecho
+    @_('lista_elementos error NUMERO')
+    def lista_elementos(self, p): #del lado derecho, del lado izquierdo fue definida mas arriba para declaracion de variables, usan el mismo no terminal
+        print(f"Error linea: {p.lineno}: falta ',' antes de {p.NUMERO}") 
+        return ('error',)
+    
+    # Falta de le después de cv o cr / Falta de cr o cv antes de le
+    @_('error UINT variable') 
+    def parametro_formal(self, p): #copia-valor-resultado, TEMA 26
+        print(f"Error linea: {p.lineno}: falta o esta mal escrito la semantica de pasaje de parametros") 
+        return ('error',)
+
+    @_('CVR UINT error') 
+    def parametro_formal(self, p):
+        print(f"Error linea: {p.lineno}: falta una variable en la definicion de los parametros") 
+        return ('error',)
+
+    #falta delimitadores en funcion lambda: solucionado, es bloque_sent_ejec, aplica la misma regla para los bloques del if,else, y while
+
 
     def error(self, p):
         if p:

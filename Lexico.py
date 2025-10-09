@@ -18,6 +18,7 @@ class Lexico(Lexer):
         pass
     
     #reglas para tokens
+    EQ = r'==' #tiene que ir antes del '=' asi lo toma primero
     ASIGNACION1 = r'=' 
     ASIGNACION2= r':='
     FLECHA = r'->'
@@ -26,7 +27,6 @@ class Lexico(Lexer):
     GE = r'>='
     GT = r'>'
     NE = r'!='
-    EQ = r'=='
     IF= r'if'
     ELSE = r'else'
     ENDIF = r'endif'

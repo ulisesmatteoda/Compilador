@@ -1,2 +1,5 @@
-## Asignaciones multiples con mas lados a la izquierda y no a la derecha##
-A, B, C= 8UI, 9UI;
+PRUEBA2{
+    uint A, B, C, D;
+    A , B = 7UI, 8UI, 9UI;
+    A, B, C = 8UI, 9UI;  ## Asignaciones multiples con mas lados a la izquierda y no a la derecha ##
+}

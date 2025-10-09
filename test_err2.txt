@@ -1,0 +1,10 @@
+PRUEBA3 {
+
+    if (A - B== C + 2UI) { 
+        A := B + C ;
+    } 
+    else
+        A:= B - C;
+    endif;
+
+}

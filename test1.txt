@@ -1,4 +1,4 @@
-TEST1 {
+PRUEBA1 {
     uint A, B, C, D;
     A := 10UI;
     C, D = 1UI, 2UI; ## Asignaciones multiples ##
@@ -7,7 +7,7 @@ TEST1 {
     uint F(uint X) { ## Declaracion de funciones ##
         Y := X;
         return (Y); ## return ##
-    }
+    };
 
     A := F(A -> X);  ## llamada con parámetro real etiquetado ##
 
